@@ -1,0 +1,2299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>La Leyenda de Keke · El Dios del Trotasierra y el Pacto con Unicaja</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-void: #040100;
+      --card-bg: rgba(13, 5, 2, 0.88);
+      --gold-pure: #fff5d6;
+      --gold-bright: #ffd166;
+      --gold-mid: #f59e0b;
+      --fire-orange: #ea580c;
+      --fire-crimson: #991b1b;
+      --unicaja-emerald: #10b981;
+      --unicaja-glow: #34d399;
+      --text-parchment: #f8ede3;
+      --text-muted: #cbb8a6;
+      --border-gold: rgba(245, 158, 11, 0.45);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      width: 100%;
+      max-width: 100%;
+      overflow-x: clip;
+    }
+
+    body {
+      background-color: var(--bg-void);
+      background-image:
+        radial-gradient(ellipse 85% 45% at 50% 0%, rgba(234, 88, 12, 0.28) 0%, transparent 60%),
+        radial-gradient(ellipse 70% 50% at 15% 45%, rgba(153, 27, 27, 0.22) 0%, transparent 60%),
+        radial-gradient(ellipse 70% 50% at 85% 65%, rgba(16, 185, 129, 0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 90% 45% at 50% 100%, rgba(234, 88, 12, 0.32) 0%, transparent 65%),
+        linear-gradient(180deg, #050100 0%, #110401 50%, #050100 100%);
+      color: var(--text-parchment);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      width: 100%;
+      max-width: 100%;
+      min-height: 100vh;
+      overflow-x: clip;
+      overflow-y: auto;
+      line-height: 1.88;
+      position: relative;
+    }
+
+    /* Viñeta Cinematográfica estática */
+    .vignette-overlay {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, transparent 42%, rgba(0, 0, 0, 0.82) 100%);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Barra de Progreso Luminosa */
+    .reading-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      width: 0%;
+      background: linear-gradient(90deg, var(--fire-orange), var(--gold-bright), var(--unicaja-emerald));
+      box-shadow: 0 0 18px var(--gold-bright);
+      z-index: 100;
+      transition: width 0.12s ease-out;
+    }
+
+    /* Barra Superior HUD */
+    .top-hud {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.65rem;
+      padding: 0.75rem 1.25rem;
+      background: rgba(8, 2, 1, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-gold);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), 0 1px 18px rgba(234, 88, 12, 0.25);
+    }
+
+    .hud-brand {
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      font-size: 0.86rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold-bright);
+      text-shadow: 0 0 16px rgba(245, 158, 11, 0.75);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .hud-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .btn-arcane {
+      font-family: 'Cinzel', serif;
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gold-pure);
+      background: linear-gradient(135deg, rgba(234, 88, 12, 0.3), rgba(120, 53, 15, 0.42));
+      border: 1px solid var(--border-gold);
+      padding: 0.45rem 0.85rem;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 0 12px rgba(234, 88, 12, 0.2);
+      transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+    }
+
+    .btn-arcane:hover {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.52), rgba(234, 88, 12, 0.6));
+      border-color: var(--gold-bright);
+      box-shadow: 0 0 24px rgba(255, 209, 102, 0.65);
+    }
+
+    .btn-arcane.emerald-nav {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.28), rgba(6, 78, 59, 0.45));
+      border-color: rgba(52, 211, 153, 0.5);
+    }
+
+    .btn-arcane.emerald-nav:hover {
+      border-color: var(--unicaja-glow);
+      box-shadow: 0 0 24px rgba(52, 211, 153, 0.65);
+    }
+
+    /* Contenedor Principal */
+    .chronicle-wrapper {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 2rem 1rem 5rem;
+    }
+
+    /* Cabecera Épica con Halo Divino */
+    .hero-sanctuary {
+      text-align: center;
+      padding: 1rem 0.5rem 1.8rem;
+      position: relative;
+    }
+
+    .crest-halo {
+      position: relative;
+      width: min(215px, 60vw);
+      height: 122px;
+      margin: 0 auto 1.4rem;
+      border-radius: 16px;
+      border: 2px solid var(--gold-bright);
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow:
+        0 0 38px rgba(255, 209, 102, 0.55),
+        0 0 75px rgba(234, 88, 12, 0.35),
+        inset 0 0 18px rgba(245, 158, 11, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .crest-halo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 8px;
+      display: block;
+      user-select: none;
+    }
+
+    .epic-kicker {
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--gold-bright);
+      text-shadow: 0 0 16px rgba(234, 88, 12, 0.85);
+      margin-bottom: 0.6rem;
+    }
+
+    .epic-title {
+      font-family: 'Cinzel Decorative', 'Cinzel', serif;
+      font-size: clamp(2rem, 6vw, 4rem);
+      font-weight: 900;
+      line-height: 1.14;
+      background: linear-gradient(180deg, #ffffff 5%, #ffe082 48%, #f97316 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 4px 28px rgba(234, 88, 12, 0.75));
+      margin-bottom: 0.8rem;
+      word-break: break-word;
+    }
+
+    /* Separador Ornamental con Símbolos Arcanos */
+    .ornate-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      margin: 0.9rem auto 1.1rem;
+      max-width: 460px;
+      width: 100%;
+      color: var(--gold-bright);
+      text-shadow: 0 0 14px rgba(245, 158, 11, 0.8);
+    }
+
+    .ornate-divider .line {
+      height: 1px;
+      flex: 1;
+      background: linear-gradient(90deg, transparent, var(--gold-bright), transparent);
+      box-shadow: 0 0 10px var(--gold-mid);
+    }
+
+    .epic-subtitle {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(0.95rem, 2.2vw, 1.24rem);
+      color: var(--gold-pure);
+      letter-spacing: 0.07em;
+      max-width: 750px;
+      margin: 0 auto;
+      text-shadow: 0 2px 14px rgba(0, 0, 0, 0.9);
+    }
+
+    /* Marcos Panorámicos Blindados desde assets/ */
+    .panoramic-relic-frame {
+      position: relative;
+      width: 100%;
+      margin: 2rem auto 2.5rem;
+      border-radius: 14px;
+      border: 1.5px solid var(--gold-mid);
+      background: linear-gradient(135deg, rgba(22, 8, 3, 0.94), rgba(8, 3, 1, 0.98));
+      box-shadow:
+        0 24px 65px rgba(0, 0, 0, 0.9),
+        0 0 42px rgba(234, 88, 12, 0.36),
+        inset 0 0 25px rgba(255, 209, 102, 0.14);
+      overflow: hidden;
+    }
+
+    .ratio-16-5 {
+      aspect-ratio: 16 / 5;
+      min-height: 135px;
+    }
+
+    .ratio-4-1 {
+      aspect-ratio: 4 / 1;
+      min-height: 115px;
+    }
+
+    .panoramic-relic-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      user-select: none;
+    }
+
+    .panoramic-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 0.65rem 1rem;
+      background: linear-gradient(0deg, rgba(4, 1, 0, 0.92) 0%, rgba(4, 1, 0, 0.4) 65%, transparent 100%);
+      font-family: 'Cinzel', serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold-bright);
+      text-shadow: 0 0 12px rgba(234, 88, 12, 0.8);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+    }
+
+    /* Grimorio Ornamentado del Relato */
+    .story-grimoire {
+      width: 100%;
+      max-width: 850px;
+      margin: 0 auto 3rem;
+      padding: clamp(1.5rem, 4vw, 3.8rem);
+      background: var(--card-bg);
+      border: 1.5px solid var(--border-gold);
+      border-radius: 16px;
+      box-shadow:
+        0 30px 85px rgba(0, 0, 0, 0.92),
+        0 0 50px rgba(234, 88, 12, 0.18),
+        inset 0 0 50px rgba(245, 158, 11, 0.08);
+      position: relative;
+    }
+
+    .corner-filigree {
+      position: absolute;
+      width: 36px;
+      height: 36px;
+      color: var(--gold-bright);
+      filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.7));
+      pointer-events: none;
+    }
+
+    .corner-tl { top: 8px; left: 8px; }
+    .corner-tr { top: 8px; right: 8px; transform: scaleX(-1); }
+    .corner-bl { bottom: 8px; left: 8px; transform: scaleY(-1); }
+    .corner-br { bottom: 8px; right: 8px; transform: scale(-1, -1); }
+
+    .grimoire-header-badge {
+      text-align: center;
+      margin-bottom: 1.8rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(245, 158, 11, 0.25);
+    }
+
+    .grimoire-rune-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold-bright);
+      text-shadow: 0 0 14px rgba(245, 158, 11, 0.65);
+    }
+
+    .grimoire-subhint {
+      font-size: 0.96rem;
+      font-style: italic;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    .story-body {
+      font-size: 1.32rem;
+      color: var(--text-parchment);
+      transition: font-size 0.2s ease;
+    }
+
+    .story-body p {
+      margin-bottom: 1.6rem;
+      text-align: left;
+    }
+
+    @media (min-width: 640px) {
+      .story-body p {
+        text-align: justify;
+      }
+    }
+
+    .story-body p:first-of-type::first-letter {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 3.6rem;
+      float: left;
+      line-height: 0.82;
+      padding-right: 0.7rem;
+      padding-top: 0.16rem;
+      color: var(--gold-bright);
+      text-shadow: 0 0 26px rgba(234, 88, 12, 0.9);
+    }
+
+    .story-body p:last-child {
+      margin-bottom: 0;
+      margin-top: 1.8rem;
+      padding: 1.1rem 1.25rem;
+      font-style: italic;
+      color: var(--gold-pure);
+      background: linear-gradient(90deg, rgba(245, 158, 11, 0.12), transparent);
+      border-left: 3px solid var(--gold-bright);
+      border-radius: 0 10px 10px 0;
+      box-shadow: inset 0 0 20px rgba(234, 88, 12, 0.08);
+    }
+
+    /* Vínculos Brillantes del Códice */
+    .lore-link {
+      font-weight: 700;
+      color: var(--gold-bright);
+      background: rgba(245, 158, 11, 0.15);
+      border-bottom: 1.5px solid rgba(255, 209, 102, 0.65);
+      padding: 0 0.3rem;
+      border-radius: 4px;
+      cursor: pointer;
+      text-shadow: 0 0 12px rgba(245, 158, 11, 0.45);
+      transition: background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .lore-link:hover {
+      color: #ffffff;
+      background: rgba(234, 88, 12, 0.45);
+      box-shadow: 0 0 20px rgba(255, 209, 102, 0.75);
+    }
+
+    .lore-link.unicaja-theme {
+      color: var(--unicaja-glow);
+      background: rgba(16, 185, 129, 0.16);
+      border-bottom-color: rgba(52, 211, 153, 0.75);
+      text-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
+    }
+
+    .lore-link.unicaja-theme:hover {
+      color: #ffffff;
+      background: rgba(16, 185, 129, 0.42);
+      box-shadow: 0 0 22px rgba(52, 211, 153, 0.8);
+    }
+
+    /* Compendio de Emblemas y Personajes */
+    .compendium-section {
+      width: 100%;
+      max-width: 980px;
+      margin: 2.5rem auto 0;
+    }
+
+    .section-heading {
+      text-align: center;
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1.38rem, 3.6vw, 2.15rem);
+      color: var(--gold-bright);
+      letter-spacing: 0.1em;
+      margin-bottom: 0.4rem;
+      text-shadow: 0 0 24px rgba(234, 88, 12, 0.75);
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
+      gap: 1.15rem;
+      margin: 1.6rem 0 2.5rem;
+    }
+
+    .entity-card {
+      position: relative;
+      background: linear-gradient(165deg, rgba(24, 10, 4, 0.92), rgba(10, 4, 2, 0.95));
+      border: 1px solid var(--border-gold);
+      border-radius: 14px;
+      padding: 1.5rem 1.15rem;
+      text-align: center;
+      cursor: pointer;
+      box-shadow: 0 16px 42px rgba(0, 0, 0, 0.85), inset 0 0 24px rgba(245, 158, 11, 0.06);
+      transition: transform 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease;
+    }
+
+    .entity-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--gold-bright);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.92), 0 0 34px rgba(245, 158, 11, 0.45);
+    }
+
+    .entity-card.unicaja-card {
+      border-color: rgba(16, 185, 129, 0.48);
+      box-shadow: 0 16px 42px rgba(0, 0, 0, 0.85), inset 0 0 24px rgba(16, 185, 129, 0.08);
+    }
+
+    .entity-card.unicaja-card:hover {
+      border-color: var(--unicaja-glow);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.92), 0 0 36px rgba(16, 185, 129, 0.5);
+    }
+
+    .emblem-medallion {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 0.85rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle, rgba(245, 158, 11, 0.25), rgba(15, 6, 2, 0.9));
+      border: 1.5px solid var(--gold-bright);
+      color: var(--gold-bright);
+      box-shadow: 0 0 22px rgba(245, 158, 11, 0.4);
+    }
+
+    .unicaja-card .emblem-medallion {
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.28), rgba(4, 18, 12, 0.9));
+      border-color: var(--unicaja-glow);
+      color: var(--unicaja-glow);
+      box-shadow: 0 0 22px rgba(16, 185, 129, 0.45);
+    }
+
+    .entity-tag {
+      font-family: 'Cinzel', serif;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gold-mid);
+      margin-bottom: 0.35rem;
+    }
+
+    .unicaja-card .entity-tag {
+      color: var(--unicaja-emerald);
+    }
+
+    .entity-name {
+      font-family: 'Cinzel', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 0.4rem;
+    }
+
+    .entity-desc {
+      font-size: 0.96rem;
+      color: var(--text-muted);
+      line-height: 1.48;
+    }
+
+    /* Altar Global de Hype */
+    .alliance-altar {
+      position: relative;
+      text-align: center;
+      padding: 2.2rem 1.2rem;
+      margin-bottom: 3.2rem;
+      background: linear-gradient(135deg, rgba(234, 88, 12, 0.18), rgba(14, 7, 3, 0.92), rgba(16, 185, 129, 0.18));
+      border: 1.5px solid var(--gold-bright);
+      border-radius: 18px;
+      box-shadow:
+        0 26px 70px rgba(0, 0, 0, 0.92),
+        0 0 48px rgba(245, 158, 11, 0.28),
+        inset 0 0 35px rgba(16, 185, 129, 0.12);
+    }
+
+    .hype-kicker {
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold-bright);
+      margin-bottom: 0.5rem;
+    }
+
+    .hype-counter-box {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      padding: 0.7rem 1.8rem;
+      margin: 0.65rem auto 1rem;
+      max-width: 100%;
+      background: rgba(5, 2, 1, 0.85);
+      border: 1.5px solid rgba(255, 209, 102, 0.55);
+      border-radius: 999px;
+      box-shadow: 0 0 30px rgba(234, 88, 12, 0.35), inset 0 0 18px rgba(16, 185, 129, 0.2);
+    }
+
+    .hype-number {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 900;
+      background: linear-gradient(90deg, #ffd166, #ffffff, #34d399);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 14px rgba(255, 209, 102, 0.6));
+      transition: transform 0.14s ease;
+    }
+
+    .hype-number.bump {
+      transform: scale(1.16);
+    }
+
+    .alliance-status {
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      letter-spacing: 0.08em;
+      color: var(--gold-pure);
+      margin-bottom: 1.3rem;
+    }
+
+    .btn-seal-alliance {
+      position: relative;
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(0.88rem, 2.4vw, 1.12rem);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: #ffffff;
+      background: linear-gradient(90deg, #b45309, #ea580c, #059669);
+      border: 2px solid var(--gold-bright);
+      padding: 0.95rem 1.8rem;
+      max-width: 100%;
+      border-radius: 999px;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 0 36px rgba(245, 158, 11, 0.55), 0 0 24px rgba(16, 185, 129, 0.35);
+      transition: transform 0.12s ease, box-shadow 0.25s ease;
+    }
+
+    .btn-seal-alliance:hover {
+      box-shadow: 0 0 52px rgba(255, 209, 102, 0.85), 0 0 38px rgba(52, 211, 153, 0.65);
+    }
+
+    .btn-seal-alliance:active {
+      transform: scale(0.95);
+    }
+
+    .hype-subnote {
+      margin-top: 0.9rem;
+      font-size: 0.94rem;
+      font-style: italic;
+      color: var(--text-muted);
+    }
+
+    /* =========================================================================
+       PASAPORTE OBLIGATORIO DE ATLETA + ARENA DE JUEGOS DEL REINO
+       ========================================================================= */
+    .games-sanctuary {
+      width: 100%;
+      max-width: 1020px;
+      margin: 0 auto;
+    }
+
+    .athlete-passport-card {
+      width: 100%;
+      max-width: 680px;
+      margin: 1.5rem auto 2rem;
+      padding: 1.35rem 1.4rem;
+      background: linear-gradient(145deg, rgba(28, 12, 4, 0.95), rgba(10, 4, 2, 0.98));
+      border: 2px solid var(--gold-bright);
+      border-radius: 16px;
+      box-shadow:
+        0 20px 55px rgba(0, 0, 0, 0.9),
+        0 0 35px rgba(245, 158, 11, 0.25);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    @keyframes passportShake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-7px); }
+      40%, 80% { transform: translateX(7px); }
+    }
+
+    .athlete-passport-card.passport-alert {
+      border-color: #ef4444 !important;
+      box-shadow:
+        0 0 42px rgba(239, 68, 68, 0.8),
+        inset 0 0 22px rgba(239, 68, 68, 0.3) !important;
+      animation: passportShake 0.45s ease-in-out;
+    }
+
+    .passport-top-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .passport-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold-bright);
+    }
+
+    .passport-badge {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+      text-transform: uppercase;
+    }
+
+    .passport-badge.missing {
+      color: #fca5a5;
+      background: rgba(239, 68, 68, 0.22);
+      border: 1px solid rgba(239, 68, 68, 0.55);
+    }
+
+    .passport-badge.registered {
+      color: #6ee7b7;
+      background: rgba(16, 185, 129, 0.22);
+      border: 1px solid rgba(52, 211, 153, 0.55);
+    }
+
+    .passport-desc {
+      font-size: 1.02rem;
+      color: var(--text-muted);
+      margin-bottom: 0.9rem;
+      line-height: 1.45;
+    }
+
+    .passport-form-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+    }
+
+    .passport-input {
+      flex: 1;
+      min-width: 190px;
+      width: 100%;
+      padding: 0.75rem 1rem;
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #ffffff;
+      background: rgba(5, 2, 1, 0.92);
+      border: 1.5px solid rgba(245, 158, 11, 0.55);
+      border-radius: 10px;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .passport-input:focus {
+      border-color: var(--gold-bright);
+      box-shadow: 0 0 18px rgba(255, 209, 102, 0.45);
+    }
+
+    .passport-save-btn {
+      font-family: 'Cinzel', serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #ffffff;
+      background: linear-gradient(135deg, #d97706, #ea580c);
+      border: 1.5px solid var(--gold-bright);
+      padding: 0.75rem 1.3rem;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(234, 88, 12, 0.45);
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
+    }
+
+    .passport-save-btn:hover {
+      box-shadow: 0 0 28px rgba(255, 209, 102, 0.75);
+    }
+
+    .passport-save-btn:active {
+      transform: scale(0.96);
+    }
+
+    .passport-error-msg {
+      margin-top: 0.65rem;
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #f87171;
+      display: none;
+    }
+
+    .passport-error-msg.visible {
+      display: block;
+    }
+
+    /* Tarjetas de Juegos */
+    .game-arena-card {
+      width: 100%;
+      background: rgba(11, 5, 2, 0.92);
+      border: 1.5px solid var(--border-gold);
+      border-radius: 18px;
+      padding: 1.35rem;
+      margin-top: 2rem;
+      box-shadow:
+        0 28px 80px rgba(0, 0, 0, 0.92),
+        0 0 42px rgba(234, 88, 12, 0.22),
+        inset 0 0 30px rgba(245, 158, 11, 0.06);
+    }
+
+    .game-card-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.85rem;
+      border-bottom: 1px solid rgba(245, 158, 11, 0.24);
+    }
+
+    .game-card-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1.12rem, 2.8vw, 1.55rem);
+      color: var(--gold-bright);
+      text-shadow: 0 0 14px rgba(234, 88, 12, 0.6);
+    }
+
+    .game-card-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.55rem;
+    }
+
+    .game-card-tag {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--unicaja-glow);
+      background: rgba(16, 185, 129, 0.14);
+      border: 1px solid rgba(52, 211, 153, 0.4);
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+    }
+
+    .game-iframe-shell {
+      position: relative;
+      width: 100%;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1.5px solid rgba(255, 209, 102, 0.35);
+      background: #060201;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.85);
+    }
+
+    .game-iframe-shell iframe {
+      display: block;
+      width: 100%;
+      height: 620px;
+      border: 0;
+    }
+
+    /* Botón flotante para salir de pantalla completa cuando el contenedor está en Fullscreen */
+    .btn-exit-fullscreen {
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      z-index: 9999;
+      display: none;
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #fff;
+      background: rgba(15, 6, 2, 0.9);
+      border: 1.5px solid var(--gold-bright);
+      padding: 0.5rem 0.9rem;
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.85);
+    }
+
+    .game-iframe-shell:fullscreen,
+    .game-iframe-shell:-webkit-full-screen {
+      width: 100vw !important;
+      height: 100vh !important;
+      border-radius: 0 !important;
+      border: 0 !important;
+      background: #020617 !important;
+    }
+
+    .game-iframe-shell:fullscreen iframe,
+    .game-iframe-shell:-webkit-full-screen iframe {
+      width: 100vw !important;
+      height: 100vh !important;
+    }
+
+    .game-iframe-shell:fullscreen .btn-exit-fullscreen,
+    .game-iframe-shell:-webkit-full-screen .btn-exit-fullscreen {
+      display: inline-flex;
+    }
+
+    /* Escudo de bloqueo sobre los iframes cuando no hay nombre ingresado */
+    .game-lock-veil {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      background: rgba(5, 2, 1, 0.82);
+      backdrop-filter: blur(4px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 1.25rem;
+      cursor: pointer;
+    }
+
+    .game-lock-veil.unlocked {
+      display: none;
+    }
+
+    .game-lock-veil-box {
+      background: rgba(18, 8, 3, 0.95);
+      border: 1.5px solid var(--gold-bright);
+      border-radius: 14px;
+      padding: 1.25rem 1.4rem;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.9);
+    }
+
+    .game-lock-veil-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--gold-bright);
+      margin-bottom: 0.4rem;
+    }
+
+    .game-lock-veil-text {
+      font-size: 1rem;
+      color: var(--text-parchment);
+      margin-bottom: 0.9rem;
+    }
+
+    /* Ajustes de altura en móvil/tablet vertical y horizontal */
+    @media (max-width: 768px) {
+      .game-iframe-shell iframe {
+        height: 410px;
+      }
+      .game-arena-card {
+        padding: 0.9rem;
+      }
+      .top-hud {
+        padding: 0.65rem 0.9rem;
+      }
+    }
+
+    @media (max-height: 520px) and (orientation: landscape) {
+      .game-iframe-shell iframe {
+        height: 82vh;
+      }
+    }
+
+    /* Salón de la Fama (Rankings Firebase en tiempo real sin desborde lateral) */
+    .leaderboard-box {
+      margin-top: 1.25rem;
+      width: 100%;
+      background: linear-gradient(160deg, rgba(20, 9, 4, 0.94), rgba(8, 3, 1, 0.98));
+      border: 1px solid rgba(245, 158, 11, 0.38);
+      border-radius: 14px;
+      padding: 1.1rem 1rem;
+    }
+
+    .leaderboard-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .leaderboard-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold-bright);
+    }
+
+    .leaderboard-badge {
+      font-family: 'Cinzel', serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--unicaja-glow);
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(52, 211, 153, 0.35);
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+      transition: all 0.25s ease;
+    }
+
+    .leaderboard-badge.live-flash {
+      color: #ffffff;
+      background: rgba(245, 158, 11, 0.35);
+      border-color: var(--gold-bright);
+      box-shadow: 0 0 14px rgba(255, 209, 102, 0.65);
+    }
+
+    /* Envoltorio con scroll horizontal interno para que la tabla NUNCA saque la web hacia la derecha */
+    .leaderboard-table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .leaderboard-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+    }
+
+    .leaderboard-table th {
+      text-align: left;
+      padding: 0.5rem 0.6rem;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      border-bottom: 1px solid rgba(245, 158, 11, 0.25);
+      white-space: nowrap;
+    }
+
+    .leaderboard-table td {
+      padding: 0.6rem 0.6rem;
+      color: var(--text-parchment);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .leaderboard-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .leaderboard-table tr.is-current-player td {
+      background: rgba(245, 158, 11, 0.14);
+      color: var(--gold-bright);
+      font-weight: 700;
+    }
+
+    .leaderboard-placeholder-row td {
+      text-align: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.02rem;
+      color: var(--text-muted);
+      padding: 1rem;
+    }
+
+    @media (max-width: 540px) {
+      .leaderboard-table {
+        font-size: 0.76rem;
+      }
+      .leaderboard-table th,
+      .leaderboard-table td {
+        padding: 0.45rem 0.42rem;
+      }
+    }
+
+    /* Flotadores +1 🔥 / +1 💚 */
+    .floating-vote {
+      position: fixed;
+      pointer-events: none;
+      font-family: 'Cinzel Decorative', serif;
+      font-weight: 900;
+      font-size: 1.35rem;
+      z-index: 300;
+      text-shadow: 0 0 14px rgba(0, 0, 0, 0.95);
+      animation: floatUpVote 0.95s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes floatUpVote {
+      0% { opacity: 1; transform: translate(-50%, 0) scale(0.8); }
+      40% { opacity: 1; transform: translate(-50%, -38px) scale(1.18); }
+      100% { opacity: 0; transform: translate(-50%, -88px) scale(0.95); }
+    }
+
+    /* Modal del Códice */
+    .codex-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 1, 0, 0.86);
+      backdrop-filter: blur(10px);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+
+    .codex-backdrop.active {
+      display: flex;
+      animation: fadeIn 0.22s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .codex-modal {
+      width: 100%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: linear-gradient(160deg, #1a0a04 0%, #090301 100%);
+      border: 1.5px solid var(--gold-bright);
+      border-radius: 16px;
+      padding: 1.75rem 1.4rem;
+      position: relative;
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.96), 0 0 50px rgba(234, 88, 12, 0.45);
+    }
+
+    .codex-modal.unicaja-modal {
+      border-color: var(--unicaja-glow);
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.96), 0 0 50px rgba(16, 185, 129, 0.45);
+    }
+
+    .codex-close {
+      position: absolute;
+      top: 0.85rem;
+      right: 0.85rem;
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #ffffff;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      font-size: 1.1rem;
+      cursor: pointer;
+      z-index: 5;
+    }
+
+    .codex-close:hover {
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    .keke-square-portrait {
+      position: relative;
+      width: min(220px, 65vw);
+      height: min(220px, 65vw);
+      aspect-ratio: 1 / 1;
+      margin: 0 auto 1.15rem;
+      border-radius: 14px;
+      border: 2px solid var(--gold-bright);
+      background: radial-gradient(circle at center, rgba(234, 88, 12, 0.25), rgba(8, 3, 1, 0.96));
+      box-shadow:
+        0 14px 40px rgba(0, 0, 0, 0.9),
+        0 0 36px rgba(255, 209, 102, 0.5),
+        inset 0 0 20px rgba(245, 158, 11, 0.25);
+      overflow: hidden;
+      display: none;
+    }
+
+    .keke-square-portrait.visible {
+      display: block;
+    }
+
+    .keke-square-portrait img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      user-select: none;
+    }
+
+    .modal-emblem-wrap {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.85rem;
+      background: radial-gradient(circle, rgba(245, 158, 11, 0.25), rgba(14, 5, 2, 0.95));
+      border: 1.5px solid var(--gold-bright);
+      color: var(--gold-bright);
+      box-shadow: 0 0 24px rgba(245, 158, 11, 0.45);
+    }
+
+    .unicaja-modal .modal-emblem-wrap {
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.25), rgba(4, 18, 12, 0.95));
+      border-color: var(--unicaja-glow);
+      color: var(--unicaja-glow);
+      box-shadow: 0 0 24px rgba(16, 185, 129, 0.45);
+    }
+
+    .modal-rank {
+      font-family: 'Cinzel', serif;
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold-mid);
+      margin-bottom: 0.35rem;
+    }
+
+    .unicaja-modal .modal-rank {
+      color: var(--unicaja-glow);
+    }
+
+    .modal-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1.4rem, 4vw, 1.75rem);
+      color: #ffffff;
+      margin-bottom: 0.85rem;
+      text-shadow: 0 0 18px rgba(245, 158, 11, 0.4);
+    }
+
+    .modal-body {
+      font-size: 1.12rem;
+      color: var(--text-parchment);
+      line-height: 1.65;
+      margin-bottom: 1.15rem;
+    }
+
+    .modal-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0.6rem;
+      margin-bottom: 1.15rem;
+    }
+
+    .stat-pill {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(245, 158, 11, 0.28);
+      border-radius: 8px;
+      padding: 0.5rem 0.7rem;
+    }
+
+    .unicaja-modal .stat-pill {
+      border-color: rgba(16, 185, 129, 0.34);
+    }
+
+    .stat-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .stat-val {
+      font-family: 'Cinzel', serif;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--gold-bright);
+    }
+
+    .unicaja-modal .stat-val {
+      color: var(--unicaja-glow);
+    }
+
+    .modal-quote {
+      font-style: italic;
+      font-size: 1.08rem;
+      color: var(--gold-pure);
+      border-left: 2px solid var(--gold-mid);
+      padding-left: 0.9rem;
+    }
+
+    .unicaja-modal .modal-quote {
+      border-left-color: var(--unicaja-emerald);
+    }
+  </style>
+</head>
+<body>
+  <div class="vignette-overlay"></div>
+  <div class="reading-progress" id="readingProgress"></div>
+
+  <!-- Barra de Control Superior -->
+  <header class="top-hud">
+    <div class="hud-brand">
+      <span>🔥 Crónicas de Las Erillas · El Dios Keke</span>
+    </div>
+    <div class="hud-controls">
+      <a href="#arena-juegos" class="btn-arcane emerald-nav">🎮 Arena de Juegos</a>
+      <button class="btn-arcane" id="btnFontMinus">A-</button>
+      <button class="btn-arcane" id="btnFontPlus">A+</button>
+      <button class="btn-arcane" id="btnAudio">🔊 Eco Místico</button>
+    </div>
+  </header>
+
+  <main class="chronicle-wrapper">
+    <!-- Cabecera Épica y Escudo Oficial Trotasierra -->
+    <section class="hero-sanctuary">
+      <div class="crest-halo">
+        <img src="assets/logo-trotasierra.png" alt="Logo Oficial Club de Atletismo Trotasierra" draggable="false" />
+      </div>
+
+      <div class="epic-kicker">✦ Códice Supremo del Reino Atlético ✦</div>
+      <h1 class="epic-title">Keke, el Trotasierra</h1>
+
+      <div class="ornate-divider">
+        <span class="line"></span>
+        <span>⚔️</span>
+        <span>👑</span>
+        <span>🔥</span>
+        <span class="line"></span>
+      </div>
+
+      <p class="epic-subtitle">La epopeya de cómo el Señor de Las Erillas salvó el destino del club y forjó el pacto eterno con Unicaja</p>
+    </section>
+
+    <!-- BANNER PANORÁMICO 1: assets/erillas.jpg (16:5) -->
+    <section class="panoramic-relic-frame ratio-16-5">
+      <img src="assets/erillas.jpg" alt="Vista panorámica mágica del Reino de Las Erillas" draggable="false" />
+      <div class="panoramic-caption">
+        <span>✦ Santuario de Las Erillas · Reino del Trotasierra</span>
+        <span>Vista Suprema ✦</span>
+      </div>
+    </section>
+
+    <!-- GRIMORIO ORNAMENTADO DE LA HISTORIA -->
+    <article class="story-grimoire">
+      <svg class="corner-filigree corner-tl" viewBox="0 0 64 64" fill="none">
+        <path d="M4 60V16C4 9.37 9.37 4 16 4H60" stroke="currentColor" stroke-width="2"/>
+        <path d="M12 46V20C12 15.58 15.58 12 20 12H46" stroke="currentColor" stroke-width="1.2" opacity="0.7"/>
+        <circle cx="16" cy="16" r="3.5" fill="currentColor"/>
+      </svg>
+      <svg class="corner-filigree corner-tr" viewBox="0 0 64 64" fill="none">
+        <path d="M4 60V16C4 9.37 9.37 4 16 4H60" stroke="currentColor" stroke-width="2"/>
+        <path d="M12 46V20C12 15.58 15.58 12 20 12H46" stroke="currentColor" stroke-width="1.2" opacity="0.7"/>
+        <circle cx="16" cy="16" r="3.5" fill="currentColor"/>
+      </svg>
+      <svg class="corner-filigree corner-bl" viewBox="0 0 64 64" fill="none">
+        <path d="M4 60V16C4 9.37 9.37 4 16 4H60" stroke="currentColor" stroke-width="2"/>
+        <path d="M12 46V20C12 15.58 15.58 12 20 12H46" stroke="currentColor" stroke-width="1.2" opacity="0.7"/>
+        <circle cx="16" cy="16" r="3.5" fill="currentColor"/>
+      </svg>
+      <svg class="corner-filigree corner-br" viewBox="0 0 64 64" fill="none">
+        <path d="M4 60V16C4 9.37 9.37 4 16 4H60" stroke="currentColor" stroke-width="2"/>
+        <path d="M12 46V20C12 15.58 15.58 12 20 12H46" stroke="currentColor" stroke-width="1.2" opacity="0.7"/>
+        <circle cx="16" cy="16" r="3.5" fill="currentColor"/>
+      </svg>
+
+      <div class="grimoire-header-badge">
+        <div class="grimoire-rune-title">✧ Crónica Sagrada del Reino ✧</div>
+        <div class="grimoire-subhint">Pulsa sobre los nombres y reliquias iluminadas en el relato para revelar su poder</div>
+      </div>
+
+      <div class="story-body" id="storyBody">
+        <p>
+          Ante la amenaza de perder a algunos de sus <span class="lore-link" data-lore="atletas">atletas</span>, el destino del <span class="lore-link" data-lore="club">club</span> pendía de un hilo. Todo parecía perdido: las salidas eran inminentes y las esperanzas de mantener unido al equipo se desvanecían con cada día que pasaba. Los <span class="lore-link" data-lore="atletas">atletas</span> estaban prácticamente fuera del <span class="lore-link" data-lore="club">club</span> y la oscuridad comenzaba a cubrir lo que tanto había costado construir.
+        </p>
+
+        <p>
+          Pero cuando todo parecía llegar a su fin, surgió una figura que se negó a aceptar aquel desenlace. <span class="lore-link" data-lore="keke">Miguel Aguilera Gómez</span>, conocido por todos como <span class="lore-link" data-lore="keke">Keke</span>, al enterarse de la situación, no dudó ni un instante en dar un paso al frente. Allí donde otros veían una batalla perdida, él vio una última oportunidad de luchar.
+        </p>
+
+        <p>
+          Sin embargo, en esta epopeya había un adversario cuya sombra llevaba tiempo proyectándose sobre el horizonte: el poderoso <span class="lore-link unicaja-theme" data-lore="unicaja">Unicaja</span>, antiguo rival y amenaza para la estabilidad del proyecto. Lo que durante tanto tiempo había sido una rivalidad parecía destinado a convertirse en una guerra interminable.
+        </p>
+
+        <p>
+          Pero <span class="lore-link" data-lore="keke">Keke</span>, demostrando una visión que iba mucho más allá de cualquier enfrentamiento, comprendió que no todas las batallas se ganan con la espada. Y así, en un giro inesperado de los acontecimientos, decidió unir fuerzas con aquel que una vez fue su enemigo. <span class="lore-link unicaja-theme" data-lore="unicaja">Unicaja</span> y <span class="lore-link" data-lore="keke">Keke</span> dejaron atrás sus diferencias para caminar bajo un <span class="lore-link" data-lore="alianza">mismo estandarte</span>, comprendiendo que juntos podían alcanzar cotas que por separado parecían imposibles.
+        </p>
+
+        <p>
+          La <span class="lore-link" data-lore="alianza">alianza</span> cambió el curso de la historia. Los antiguos rivales se convirtieron en compañeros de una misma causa, unidos por un propósito común: vencer las adversidades, proteger a sus <span class="lore-link" data-lore="atletas">atletas</span> y prosperar juntos.
+        </p>
+
+        <p>
+          Y mientras el destino del <span class="lore-link" data-lore="club">club</span> volvía a escribirse, <span class="lore-link" data-lore="keke">Keke</span> demostró una vez más que su grandeza no residía únicamente en resistir las tormentas, sino también en saber convertir a sus enemigos en aliados.
+        </p>
+
+        <p>
+          Porque las leyendas no se forjan solamente conquistando territorios, sino construyendo <span class="lore-link" data-lore="alianza">alianzas</span> capaces de cambiar el destino de todo un <span class="lore-link" data-lore="reino">reino</span>.
+        </p>
+      </div>
+    </article>
+
+    <!-- BANNER PANORÁMICO 2: assets/erillas2.jpg (4:1) -->
+    <section class="panoramic-relic-frame ratio-4-1">
+      <img src="assets/erillas2.jpg" alt="La pista sagrada de Las Erillas iluminada por runas" draggable="false" />
+      <div class="panoramic-caption">
+        <span>✦ Pista Sagrada de Las Erillas · Donde se selló el destino</span>
+        <span>Arena Legendaria ✦</span>
+      </div>
+    </section>
+
+    <!-- COMPENDIO DE EMBLEMAS Y PERSONAJES -->
+    <section class="compendium-section">
+      <h2 class="section-heading">Códice de los Inmortales</h2>
+
+      <div class="ornate-divider">
+        <span class="line"></span>
+        <span>🛡️</span>
+        <span>✦</span>
+        <span>🛡️</span>
+        <span class="line"></span>
+      </div>
+
+      <div class="cards-grid">
+        <div class="entity-card" data-lore="keke">
+          <div class="emblem-medallion">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M3 17l3-9 6 5 6-5 3 9H3z" />
+              <path d="M4 20h16" />
+              <circle cx="12" cy="5" r="1.5" fill="currentColor" />
+            </svg>
+          </div>
+          <div class="entity-tag">Dios Legendario · Estratega</div>
+          <div class="entity-name">Keke (Miguel Aguilera)</div>
+          <div class="entity-desc">El soberano absoluto del Trotasierra que doblegó la tormenta y salvó el reino.</div>
+        </div>
+
+        <div class="entity-card unicaja-card" data-lore="unicaja">
+          <div class="emblem-medallion">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M12 2l8 4v6c0 5.2-3.4 9.7-8 11-4.6-1.3-8-5.8-8-11V6l8-4z" />
+              <path d="M12 7v10M8 11l4-4 4 4" />
+            </svg>
+          </div>
+          <div class="entity-tag">Titán Esmeralda · Aliado</div>
+          <div class="entity-name">Unicaja</div>
+          <div class="entity-desc">Antiguo coloso rival cuya fuerza verde se unió al fuego de Keke bajo un solo estandarte.</div>
+        </div>
+
+        <div class="entity-card" data-lore="club">
+          <div class="emblem-medallion">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M12 2c2.5 3.5 5 6.2 5 10a5 5 0 01-10 0c0-2.1 1.1-4.2 2.5-6 .3 1.7 1.4 2.7 2.5 2.7 0-2.5-.5-4.7 0-6.7z" />
+              <path d="M8 21h8" />
+            </svg>
+          </div>
+          <div class="entity-tag">Bastión Sagrado</div>
+          <div class="entity-name">Club Trotasierra</div>
+          <div class="entity-desc">La fortaleza atlética de Hornachuelos y Las Erillas, renacida de sus cenizas.</div>
+        </div>
+
+        <div class="entity-card" data-lore="reino">
+          <div class="emblem-medallion">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9 12 2" />
+              <circle cx="12" cy="12" r="2.2" fill="currentColor" />
+            </svg>
+          </div>
+          <div class="entity-tag">Dominio Eterno</div>
+          <div class="entity-name">Las Erillas y el Reino</div>
+          <div class="entity-desc">Las pistas místicas donde se forjan las leyendas y el futuro del atletismo.</div>
+        </div>
+      </div>
+
+      <!-- ALTAR GLOBAL DE HYPE CONECTADO A FIREBASE -->
+      <div class="alliance-altar">
+        <div class="hype-kicker">✦ Altar Mundial de Hype · Trotasierra & Unicaja ✦</div>
+
+        <div class="hype-counter-box">
+          <span style="font-size: 1.6rem;">🔥</span>
+          <span class="hype-number" id="hypeCounter">...</span>
+          <span style="font-size: 1.6rem;">💚</span>
+        </div>
+
+        <div class="alliance-status" id="allianceStatus">Llamas acumuladas en todo el reino por la Alianza Eterna</div>
+
+        <button class="btn-seal-alliance" id="btnHypeAlliance">🔥 Avivar la Llama de Keke & Unicaja 💚</button>
+
+        <div class="hype-subnote" id="syncInfo">Pulsa tantas veces como quieras para sumar fuegos de apoyo en tiempo real</div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SECCIÓN DE JUEGOS DEL REINO Y TABLAS DE PUNTUACIÓN EN VIVO
+         ===================================================================== -->
+    <section class="games-sanctuary" id="arena-juegos">
+      <h2 class="section-heading">Arena de Pruebas de Las Erillas</h2>
+
+      <div class="ornate-divider">
+        <span class="line"></span>
+        <span>🏃‍♂️</span>
+        <span>🏆</span>
+        <span>🐉</span>
+        <span class="line"></span>
+      </div>
+
+      <!-- PASAPORTE OFICIAL DE ATLETA (OBLIGATORIO ANTES DE JUGAR) -->
+      <div class="athlete-passport-card" id="passportCard">
+        <div class="passport-top-row">
+          <span class="passport-label">🪪 Pasaporte Oficial de Atleta (Obligatorio)</span>
+          <span class="passport-badge missing" id="passportBadge">Sin registrar</span>
+        </div>
+        <p class="passport-desc">
+          Introduce tu nombre o apodo para desbloquear ambos juegos y grabar tus marcas en tiempo real en el Salón de la Fama del Reino (se recordará en este dispositivo).
+        </p>
+        <div class="passport-form-row">
+          <input
+            type="text"
+            id="athleteNameInput"
+            class="passport-input"
+            maxlength="20"
+            placeholder="Escribe tu nombre de atleta..."
+          />
+          <button type="button" id="btnSaveAthlete" class="passport-save-btn">
+            Guardar Nombre
+          </button>
+        </div>
+        <div class="passport-error-msg" id="passportErrorMsg">
+          ⚠️ ¡Debes ingresar y guardar tu nombre antes de entrar a jugar!
+        </div>
+      </div>
+
+      <!-- JUEGO 1: SPRINT ATLÉTICO -->
+      <div class="game-arena-card">
+        <div class="game-card-header">
+          <h3 class="game-card-title">I. Sprint Atlético: Trotasierra vs Unicaja</h3>
+          <div class="game-card-actions">
+            <span class="game-card-tag">Meta Hermanamiento: 1000 PTS</span>
+            <button type="button" class="btn-arcane game-fullscreen-btn" data-shell="shellJuego1" data-fallback="juego1.html">
+              ⛶ Pantalla Completa
+            </button>
+          </div>
+        </div>
+
+        <div class="game-iframe-shell" id="shellJuego1">
+          <button type="button" class="btn-exit-fullscreen" data-exit-fs>✕ Salir Pantalla Completa</button>
+          <div class="game-lock-veil" data-lock-veil>
+            <div class="game-lock-veil-box">
+              <div class="game-lock-veil-title">🔒 Prueba Bloqueada</div>
+              <p class="game-lock-veil-text">Registra tu nombre en el Pasaporte de Atleta superior para entrar en la pista.</p>
+              <button type="button" class="passport-save-btn">Escribir mi Nombre ↑</button>
+            </div>
+          </div>
+          <iframe id="iframeJuego1" src="juego1.html" title="Sprint Atlético - Trotasierra vs Unicaja" allow="fullscreen" allowfullscreen loading="lazy"></iframe>
+        </div>
+
+        <!-- Tabla de Puntuaciones Juego 1 (Firebase en vivo) -->
+        <div class="leaderboard-box" id="leaderboard-juego1">
+          <div class="leaderboard-header">
+            <span class="leaderboard-title">🏆 Salón de la Fama · Sprint Atlético</span>
+            <span class="leaderboard-badge" id="j1-last-score">Ranking Global · En Vivo</span>
+          </div>
+          <div class="leaderboard-table-wrap">
+            <table class="leaderboard-table">
+              <thead>
+                <tr>
+                  <th>Puesto</th>
+                  <th>Atleta</th>
+                  <th>Récord PTS</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody id="leaderboard-juego1-body">
+                <tr class="leaderboard-placeholder-row">
+                  <td colspan="4">Cargando clasificaciones del reino...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- JUEGO 2: LA BATALLA SUPREMA DE LAS ERILLAS -->
+      <div class="game-arena-card">
+        <div class="game-card-header">
+          <h3 class="game-card-title">II. La Batalla Suprema: Keke & Trotasierra vs Unicaja</h3>
+          <div class="game-card-actions">
+            <span class="game-card-tag">6 Niveles · Hasta 18 ⭐</span>
+            <button type="button" class="btn-arcane emerald-nav game-fullscreen-btn" data-shell="shellJuego2" data-fallback="juego2.html">
+              ⛶ Pantalla Completa
+            </button>
+          </div>
+        </div>
+
+        <div class="game-iframe-shell" id="shellJuego2">
+          <button type="button" class="btn-exit-fullscreen" data-exit-fs>✕ Salir Pantalla Completa</button>
+          <div class="game-lock-veil" data-lock-veil>
+            <div class="game-lock-veil-box">
+              <div class="game-lock-veil-title">🔒 Prueba Bloqueada</div>
+              <p class="game-lock-veil-text">Registra tu nombre en el Pasaporte de Atleta superior para comandar las tropas de Keke.</p>
+              <button type="button" class="passport-save-btn">Escribir mi Nombre ↑</button>
+            </div>
+          </div>
+          <iframe id="iframeJuego2" src="juego2.html" title="La Batalla Suprema - Trotasierra vs Unicaja" allow="fullscreen" allowfullscreen loading="lazy"></iframe>
+        </div>
+
+        <!-- Tabla de Puntuaciones Juego 2 (Nivel y Estrellas en Firebase en vivo) -->
+        <div class="leaderboard-box" id="leaderboard-juego2">
+          <div class="leaderboard-header">
+            <span class="leaderboard-title">👑 Salón de la Fama · La Batalla Suprema</span>
+            <span class="leaderboard-badge" id="j2-last-status">Ranking Global · En Vivo</span>
+          </div>
+          <div class="leaderboard-table-wrap">
+            <table class="leaderboard-table">
+              <thead>
+                <tr>
+                  <th>Puesto</th>
+                  <th>Atleta</th>
+                  <th>Nivel Alcanzado</th>
+                  <th>Estrellas</th>
+                </tr>
+              </thead>
+              <tbody id="leaderboard-juego2-body">
+                <tr class="leaderboard-placeholder-row">
+                  <td colspan="4">Cargando progreso de los campeones...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal del Códice con Retrato Cuadrado 1:1 Blindado desde assets/Keke-dragon.jpg -->
+  <div class="codex-backdrop" id="codexBackdrop">
+    <div class="codex-modal" id="codexModal">
+      <button class="codex-close" id="codexClose" aria-label="Cerrar">✕</button>
+
+      <div class="keke-square-portrait" id="kekePortraitBox">
+        <img src="assets/Keke-dragon.jpg" alt="Keke, el Señor de los Dragones" draggable="false" />
+      </div>
+
+      <div class="modal-emblem-wrap" id="modalEmblem"></div>
+      <div class="modal-rank" id="modalRank"></div>
+      <h3 class="modal-title" id="modalTitle"></h3>
+      <p class="modal-body" id="modalBody"></p>
+      <div class="modal-stats" id="modalStats"></div>
+      <blockquote class="modal-quote" id="modalQuote"></blockquote>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // 0. PASAPORTE OBLIGATORIO DE ATLETA + PANTALLA COMPLETA NATIVA HORIZONTAL
+    // =========================================================================
+    const ATHLETE_STORAGE_KEY = "keke_athlete_name";
+    const passportCard = document.getElementById("passportCard");
+    const passportBadge = document.getElementById("passportBadge");
+    const athleteInput = document.getElementById("athleteNameInput");
+    const btnSaveAthlete = document.getElementById("btnSaveAthlete");
+    const passportErrorMsg = document.getElementById("passportErrorMsg");
+    const lockVeils = document.querySelectorAll("[data-lock-veil]");
+
+    function getAthleteName() {
+      return (localStorage.getItem(ATHLETE_STORAGE_KEY) || "").trim();
+    }
+
+    function getSafeFirebaseKey(name) {
+      return name.toLowerCase().replace(/[^a-z0-9_-]/g, "_");
+    }
+
+    function broadcastAthleteToGames(name) {
+      if (!name) return;
+      const f1 = document.getElementById("iframeJuego1");
+      const f2 = document.getElementById("iframeJuego2");
+      if (f1 && f1.contentWindow) {
+        f1.contentWindow.postMessage({ type: "ATHLETE_NAME_UPDATED", name }, "*");
+      }
+      if (f2 && f2.contentWindow) {
+        f2.contentWindow.postMessage({ type: "ATHLETE_NAME_UPDATED", name }, "*");
+      }
+    }
+
+    function updatePassportState() {
+      const currentName = getAthleteName();
+      if (currentName) {
+        athleteInput.value = currentName;
+        passportBadge.textContent = `✓ Atleta: ${currentName}`;
+        passportBadge.className = "passport-badge registered";
+        passportErrorMsg.classList.remove("visible");
+        passportCard.classList.remove("passport-alert");
+        lockVeils.forEach((v) => v.classList.add("unlocked"));
+        broadcastAthleteToGames(currentName);
+      } else {
+        passportBadge.textContent = "Sin registrar";
+        passportBadge.className = "passport-badge missing";
+        lockVeils.forEach((v) => v.classList.remove("unlocked"));
+      }
+    }
+
+    function alertMissingName() {
+      passportErrorMsg.classList.add("visible");
+      passportCard.scrollIntoView({ behavior: "smooth", block: "center" });
+      passportCard.classList.remove("passport-alert");
+      void passportCard.offsetWidth;
+      passportCard.classList.add("passport-alert");
+      setTimeout(() => athleteInput.focus(), 320);
+    }
+
+    btnSaveAthlete.addEventListener("click", () => {
+      const val = athleteInput.value.trim();
+      if (!val) {
+        alertMissingName();
+        return;
+      }
+      localStorage.setItem(ATHLETE_STORAGE_KEY, val);
+      updatePassportState();
+      loadAllLeaderboards();
+    });
+
+    athleteInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") btnSaveAthlete.click();
+    });
+
+    lockVeils.forEach((veil) => {
+      veil.addEventListener("click", () => {
+        const typed = athleteInput.value.trim();
+        if (typed) {
+          btnSaveAthlete.click();
+        } else {
+          alertMissingName();
+        }
+      });
+    });
+
+    // Pantalla completa nativa + bloqueo automático en modo horizontal (landscape)
+    async function enterGameFullscreen(shellId, fallbackUrl) {
+      const typed = athleteInput.value.trim();
+      if (!getAthleteName() && typed) {
+        localStorage.setItem(ATHLETE_STORAGE_KEY, typed);
+        updatePassportState();
+      }
+      if (!getAthleteName()) {
+        alertMissingName();
+        return;
+      }
+
+      const shell = document.getElementById(shellId);
+      if (!shell) {
+        window.location.href = fallbackUrl;
+        return;
+      }
+
+      try {
+        if (shell.requestFullscreen) {
+          await shell.requestFullscreen();
+        } else if (shell.webkitRequestFullscreen) {
+          await shell.webkitRequestFullscreen();
+        } else {
+          // Respaldo para navegadores móviles sin Fullscreen en div (ej. iPhone Safari)
+          window.location.href = fallbackUrl;
+          return;
+        }
+
+        // Intentar bloquear la pantalla en modo horizontal automáticamente
+        if (screen.orientation && screen.orientation.lock) {
+          screen.orientation.lock("landscape").catch(() => {});
+        }
+      } catch (_) {
+        window.location.href = fallbackUrl;
+      }
+    }
+
+    document.querySelectorAll(".game-fullscreen-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        enterGameFullscreen(btn.dataset.shell, btn.dataset.fallback);
+      });
+    });
+
+    document.querySelectorAll("[data-exit-fs]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        if (document.exitFullscreen) {
+          document.exitFullscreen().catch(() => {});
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        }
+      });
+    });
+
+    document.addEventListener("fullscreenchange", () => {
+      if (!document.fullscreenElement && screen.orientation && screen.orientation.unlock) {
+        try {
+          screen.orientation.unlock();
+        } catch (_) {}
+      }
+    });
+
+    window.addEventListener("storage", (e) => {
+      if (e.key === ATHLETE_STORAGE_KEY) {
+        updatePassportState();
+        loadAllLeaderboards();
+      }
+    });
+
+    document.getElementById("iframeJuego1")?.addEventListener("load", () => {
+      const name = getAthleteName();
+      if (name) broadcastAthleteToGames(name);
+    });
+    document.getElementById("iframeJuego2")?.addEventListener("load", () => {
+      const name = getAthleteName();
+      if (name) broadcastAthleteToGames(name);
+    });
+
+    updatePassportState();
+
+    // =========================================================================
+    // 1. CONEXIÓN REAL CON GOOGLE FIREBASE REALTIME DATABASE (ALTAR + RANKINGS)
+    // =========================================================================
+    const FIREBASE_DB_URL = "https://keke-3706f-default-rtdb.europe-west1.firebasedatabase.app";
+    const HYPE_ENDPOINT = `${FIREBASE_DB_URL}/alianza_hype.json`;
+
+    const hypeCounterEl = document.getElementById("hypeCounter");
+    const syncInfoEl = document.getElementById("syncInfo");
+    const btnHype = document.getElementById("btnHypeAlliance");
+
+    let displayedVotes = parseInt(localStorage.getItem("keke_local_backup_votes") || "0", 10);
+    let pendingClicks = 0;
+    let flushTimer = null;
+
+    function renderCounter(val, animate = false) {
+      hypeCounterEl.textContent = Number(val || 0).toLocaleString("es-ES");
+      if (animate) {
+        hypeCounterEl.classList.remove("bump");
+        void hypeCounterEl.offsetWidth;
+        hypeCounterEl.classList.add("bump");
+      }
+    }
+
+    async function fetchGlobalHype() {
+      if (pendingClicks > 0) return;
+      try {
+        const res = await fetch(HYPE_ENDPOINT);
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const data = await res.json();
+        const serverTotal = data && typeof data.total === "number" ? data.total : 0;
+        if (serverTotal >= displayedVotes || displayedVotes === 0) {
+          displayedVotes = serverTotal;
+          localStorage.setItem("keke_local_backup_votes", String(displayedVotes));
+          renderCounter(displayedVotes, false);
+        }
+        syncInfoEl.textContent = "🟢 Conectado en directo con el Reino · Pulsa sin límite para acumular fuegos";
+      } catch (err) {
+        renderCounter(displayedVotes, false);
+        syncInfoEl.textContent = "Pulsa tantas veces como quieras para acumular fuegos por la alianza";
+      }
+    }
+
+    async function flushVotesToFirebase() {
+      if (pendingClicks <= 0) return;
+      const batch = pendingClicks;
+      pendingClicks = 0;
+
+      try {
+        const res = await fetch(HYPE_ENDPOINT, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            total: { ".sv": { increment: batch } },
+            ultima_llama: Date.now()
+          })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data && typeof data.total === "number") {
+            displayedVotes = Math.max(displayedVotes, data.total);
+            localStorage.setItem("keke_local_backup_votes", String(displayedVotes));
+            renderCounter(displayedVotes, false);
+          }
+        }
+      } catch (_) {}
+    }
+
+    function spawnFloatingPlus(x, y) {
+      const el = document.createElement("span");
+      el.className = "floating-vote";
+      const isGreen = Math.random() > 0.5;
+      el.textContent = isGreen ? "+1 💚" : "+1 🔥";
+      el.style.color = isGreen ? "#34d399" : "#ffd166";
+      el.style.left = (x + (Math.random() - 0.5) * 40) + "px";
+      el.style.top = (y - 16) + "px";
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 950);
+    }
+
+    btnHype.addEventListener("click", (e) => {
+      displayedVotes += 1;
+      pendingClicks += 1;
+      localStorage.setItem("keke_local_backup_votes", String(displayedVotes));
+      renderCounter(displayedVotes, true);
+
+      const rect = btnHype.getBoundingClientRect();
+      const cx = e.clientX || rect.left + rect.width / 2;
+      const cy = e.clientY || rect.top;
+      spawnFloatingPlus(cx, cy);
+
+      clearTimeout(flushTimer);
+      flushTimer = setTimeout(flushVotesToFirebase, 320);
+    });
+
+    fetchGlobalHype();
+    setInterval(fetchGlobalHype, 4000);
+
+    // =========================================================================
+    // 2. GUARDADO Y LECTURA EN TIEMPO REAL DE LAS TABLAS (JUEGO 1 Y JUEGO 2)
+    // =========================================================================
+    let lastUploadedGame1Score = 0;
+    let game1SyncInFlight = false;
+
+    function escapeHTML(str) {
+      return String(str).replace(/[&<>"']/g, (m) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      }[m]));
+    }
+
+    function flashBadge(badgeEl, text) {
+      if (!badgeEl) return;
+      badgeEl.textContent = text;
+      badgeEl.classList.add("live-flash");
+      clearTimeout(badgeEl._flashTimer);
+      badgeEl._flashTimer = setTimeout(() => badgeEl.classList.remove("live-flash"), 1400);
+    }
+
+    async function saveGame1ScoreToFirebase(newScore, playerNameOverride = null, forceRefresh = false) {
+      const name = (playerNameOverride || getAthleteName()).trim();
+      const cleanScore = Math.round(Number(newScore || 0));
+      if (!name || cleanScore <= 0) return;
+
+      if (!forceRefresh && cleanScore <= lastUploadedGame1Score) return;
+      if (game1SyncInFlight && !forceRefresh) return;
+
+      game1SyncInFlight = true;
+      lastUploadedGame1Score = Math.max(lastUploadedGame1Score, cleanScore);
+
+      const safeKey = getSafeFirebaseKey(name);
+      const endpoint = `${FIREBASE_DB_URL}/rankings/juego1/${safeKey}.json`;
+
+      try {
+        const res = await fetch(endpoint);
+        const existing = await res.json();
+        const prevBest = existing && typeof existing.puntos === "number" ? existing.puntos : 0;
+        const bestScore = Math.max(prevBest, cleanScore);
+        lastUploadedGame1Score = bestScore;
+
+        if (bestScore > prevBest || forceRefresh) {
+          await fetch(endpoint, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              nombre: name,
+              puntos: bestScore,
+              fecha: Date.now()
+            })
+          });
+          await loadGame1Leaderboard();
+        }
+      } catch (_) {
+      } finally {
+        game1SyncInFlight = false;
+      }
+    }
+
+    async function saveGame2ProgressToFirebase(nivel, estrellas, playerNameOverride = null) {
+      const name = (playerNameOverride || getAthleteName()).trim();
+      const cleanLevel = Math.max(1, Math.min(6, Math.round(Number(nivel || 1))));
+      const cleanStars = Math.max(0, Math.min(18, Math.round(Number(estrellas || 0))));
+      if (!name) return;
+
+      const safeKey = getSafeFirebaseKey(name);
+      const endpoint = `${FIREBASE_DB_URL}/rankings/juego2/${safeKey}.json`;
+
+      try {
+        const res = await fetch(endpoint);
+        const existing = await res.json();
+        const prevStars = existing && typeof existing.estrellas === "number" ? existing.estrellas : 0;
+        const prevLevel = existing && typeof existing.nivel === "number" ? existing.nivel : 1;
+
+        const bestStars = Math.max(prevStars, cleanStars);
+        const bestLevel = Math.max(prevLevel, cleanLevel);
+
+        await fetch(endpoint, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            nombre: name,
+            nivel: bestLevel,
+            estrellas: bestStars,
+            fecha: Date.now()
+          })
+        });
+        await loadGame2Leaderboard();
+      } catch (_) {
+        await loadGame2Leaderboard();
+      }
+    }
+
+    window.addEventListener("message", (event) => {
+      const data = event.data;
+      if (!data || typeof data !== "object") return;
+
+      if (data.type === "ATHLETE_REGISTERED" && data.name) {
+        const incomingName = String(data.name).trim();
+        if (incomingName && incomingName !== getAthleteName()) {
+          localStorage.setItem(ATHLETE_STORAGE_KEY, incomingName);
+          updatePassportState();
+          loadAllLeaderboards();
+        }
+        return;
+      }
+
+      if (data.type === "SPRINT_LIVE_RECORD") {
+        const pts = Math.round(Number(data.score || 0));
+        flashBadge(document.getElementById("j1-last-score"), `🔥 ¡Nuevo Récord en Vivo: ${pts.toLocaleString("es-ES")} PTS!`);
+        saveGame1ScoreToFirebase(pts, data.name, false);
+        return;
+      }
+
+      if (data.type === "SPRINT_GAME_OVER") {
+        const pts = Math.round(Number(data.score || 0));
+        flashBadge(document.getElementById("j1-last-score"), `Última marca: ${pts.toLocaleString("es-ES")} PTS`);
+        saveGame1ScoreToFirebase(pts, data.name, true);
+        return;
+      }
+
+      if (data.type === "BATALLA_PROGRESS_UPDATE") {
+        const nivel = Number(data.nivel || 1);
+        const estrellas = Number(data.estrellas || 0);
+        flashBadge(document.getElementById("j2-last-status"), `⭐ ¡Actualizado: Nivel 0${nivel} · ${estrellas}/18 ⭐!`);
+        saveGame2ProgressToFirebase(nivel, estrellas, data.name);
+      }
+    });
+
+    async function loadGame1Leaderboard() {
+      const tbody = document.getElementById("leaderboard-juego1-body");
+      const currentName = getAthleteName().toLowerCase();
+      try {
+        const res = await fetch(`${FIREBASE_DB_URL}/rankings/juego1.json`);
+        const data = await res.json();
+        if (!data || typeof data !== "object") {
+          tbody.innerHTML = `<tr class="leaderboard-placeholder-row"><td colspan="4">Aún no hay marcas registradas. ¡Sé el primero en correr!</td></tr>`;
+          return;
+        }
+        const rows = Object.values(data)
+          .filter((item) => item && item.nombre && typeof item.puntos === "number")
+          .sort((a, b) => b.puntos - a.puntos)
+          .slice(0, 10);
+
+        if (rows.length === 0) {
+          tbody.innerHTML = `<tr class="leaderboard-placeholder-row"><td colspan="4">Aún no hay marcas registradas. ¡Sé el primero en correr!</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = rows
+          .map((item, idx) => {
+            const medal = idx === 0 ? "🥇 1º" : idx === 1 ? "🥈 2º" : idx === 2 ? "🥉 3º" : `#${idx + 1}`;
+            const isMe = currentName && item.nombre.toLowerCase() === currentName;
+            if (isMe) {
+              lastUploadedGame1Score = Math.max(lastUploadedGame1Score, item.puntos);
+            }
+            const status = item.puntos >= 1000 ? "🤝 Hermanamiento Logrado" : "🏃 En Competición";
+            return `
+              <tr class="${isMe ? "is-current-player" : ""}">
+                <td>${medal}</td>
+                <td>${escapeHTML(item.nombre)}</td>
+                <td>${item.puntos.toLocaleString("es-ES")} PTS</td>
+                <td>${status}</td>
+              </tr>
+            `;
+          })
+          .join("");
+      } catch (_) {
+        tbody.innerHTML = `<tr class="leaderboard-placeholder-row"><td colspan="4">No se pudo conectar con el Salón de la Fama.</td></tr>`;
+      }
+    }
+
+    async function loadGame2Leaderboard() {
+      const tbody = document.getElementById("leaderboard-juego2-body");
+      const currentName = getAthleteName().toLowerCase();
+      try {
+        const res = await fetch(`${FIREBASE_DB_URL}/rankings/juego2.json`);
+        const data = await res.json();
+        if (!data || typeof data !== "object") {
+          tbody.innerHTML = `<tr class="leaderboard-placeholder-row"><td colspan="4">Aún no hay estrategas registrados. ¡Conquista Las Erillas!</td></tr>`;
+          return;
+        }
+        const rows = Object.values(data)
+          .filter((item) => item && item.nombre && typeof item.estrellas === "number")
+          .sort((a, b) => {
+            if (b.estrellas !== a.estrellas) return b.estrellas - a.estrellas;
+            return (b.nivel || 1) - (a.nivel || 1);
+          })
+          .slice(0, 10);
+
+        if (rows.length === 0) {
+          tbody.innerHTML = `<tr class="leaderboard-placeholder-row"><td colspan="4">Aún no hay estrategas registrados. ¡Conquista Las Erillas!</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = rows
+          .map((item, idx) => {
+            const medal = idx === 0 ? "🥇 1º" : idx === 1 ? "🥈 2º" : idx === 2 ? "🥉 3º" : `#${idx + 1}`;
+            const isMe = currentName && item.nombre.toLowerCase() === currentName;
+            const lvlLabel = item.nivel === 6 ? "Nivel 06 (Alianza Final)" : `Nivel 0${item.nivel || 1}`;
+            return `
+              <tr class="${isMe ? "is-current-player" : ""}">
+                <td>${medal}</td>
+                <td>${escapeHTML(item.nombre)}</td>
+                <td>${lvlLabel}</td>
+                <td>${item.estrellas} / 18 ⭐</td>
+              </tr>
+            `;
+          })
+          .join("");
+      } catch (_) {
+        tbody.innerHTML = `<tr class="leaderboard-placeholder-row"><td colspan="4">No se pudo conectar con el Salón de la Fama.</td></tr>`;
+      }
+    }
+
+    function loadAllLeaderboards() {
+      loadGame1Leaderboard();
+      loadGame2Leaderboard();
+    }
+
+    loadAllLeaderboards();
+    setInterval(loadAllLeaderboards, 3000);
+
+    // =========================================================================
+    // 3. SÍMBOLOS SVG Y CÓDICE INTERACTIVO
+    // =========================================================================
+    const EMBLEM_ICONS = {
+      keke: `<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l3-9 6 5 6-5 3 9H3z"/><path d="M4 20h16"/><circle cx="12" cy="5" r="1.5" fill="currentColor"/></svg>`,
+      unicaja: `<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l8 4v6c0 5.2-3.4 9.7-8 11-4.6-1.3-8-5.8-8-11V6l8-4z"/><path d="M12 7v10M8 11l4-4 4 4"/></svg>`,
+      club: `<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2c2.5 3.5 5 6.2 5 10a5 5 0 01-10 0c0-2.1 1.1-4.2 2.5-6 .3 1.7 1.4 2.7 2.5 2.7 0-2.5-.5-4.7 0-6.7z"/><path d="M8 21h8"/></svg>`,
+      atletas: `<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2L4 14h7l-1 8 10-12h-7l0-8z"/></svg>`,
+      alianza: `<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="12" r="5"/><circle cx="15" cy="12" r="5"/></svg>`,
+      reino: `<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9 12 2"/><circle cx="12" cy="12" r="2.2" fill="currentColor"/></svg>`
+    };
+
+    const LORE_DB = {
+      keke: {
+        rank: "Dios Legendario · Soberano del Trotasierra",
+        title: "Miguel Aguilera Gómez «Keke»",
+        theme: "gold",
+        hasPortrait: true,
+        body: "Cuando el abismo amenazaba con devorar el proyecto y los atletas estaban al borde de la partida, Keke emergió con la autoridad de una deidad en su reino. Con temple inquebrantable y visión maestra, transformó una guerra perdida en una alianza histórica que aseguró la supremacía del club.",
+        stats: [
+          { label: "Título Supremo", val: "Señor de Las Erillas" },
+          { label: "Poder en el Reino", val: "Absoluto / Legendario" },
+          { label: "Hazaña", val: "Salvación y Pacto Magno" },
+          { label: "Elemento", val: "Fuego Dorado y Voluntad" }
+        ],
+        quote: "«Allí donde otros veían una batalla perdida, Keke vio el nacimiento de una era inmortal.»"
+      },
+      unicaja: {
+        rank: "Coloso Esmeralda · De Rival a Hermano de Armas",
+        title: "El Poderoso Unicaja",
+        theme: "unicaja",
+        body: "Durante largo tiempo, la imponente sombra de Unicaja se proyectó sobre el horizonte como el gran adversario capaz de comprometer la estabilidad del proyecto. Sin embargo, ante la grandeza estratégica de Keke, el titán esmeralda depuso las armas para caminar juntos bajo un mismo estandarte.",
+        stats: [
+          { label: "Emblema", val: "Fuerza Esmeralda" },
+          { label: "Estatus Actual", val: "Gran Aliado del Reino" },
+          { label: "Naturaleza", val: "Potencia Histórica" },
+          { label: "Juramento", val: "Prosperar Juntos" }
+        ],
+        quote: "«Cuando dos gigantes unen sus estandartes, ninguna tormenta puede detener su avance.»"
+      },
+      club: {
+        rank: "Bastión de Hornachuelos · Fortaleza Atlética",
+        title: "El Club Trotasierra",
+        theme: "gold",
+        body: "Forjado con décadas de sudor, gloria y hermandad en las pistas de Las Erillas. Estuvo al borde del colapso por la inminente fuga de sus guerreros, hasta que la intervención divina de Keke reescribió su destino con letras de fuego y oro.",
+        stats: [
+          { label: "Santuario", val: "Las Erillas" },
+          { label: "Colores", val: "Azul, Blanco y Fuego" },
+          { label: "Estado", val: "Invicto y Renacido" },
+          { label: "Protector", val: "Keke" }
+        ],
+        quote: "«Un club no muere mientras exista un líder dispuesto a dar un paso al frente por él.»"
+      },
+      atletas: {
+        rank: "La Guardia Dorada · El Alma de la Pista",
+        title: "Los Atletas del Reino",
+        theme: "gold",
+        body: "Los corredores y competidores que constituyen el corazón vivo del equipo. Su inminente marcha estuvo al borde de sumir el proyecto en las tinieblas, pero el pacto sellado por Keke les devolvió un hogar invencible donde conquistar nuevas cimas.",
+        stats: [
+          { label: "Rol", val: "Campeones del Tartán" },
+          { label: "Destino", val: "Protegidos por la Alianza" },
+          { label: "Fuerza", val: "Unidad Inquebrantable" },
+          { label: "Horizonte", val: "Gloria Compartida" }
+        ],
+        quote: "«Proteger a sus atletas fue la chispa que encendió la mayor gesta de Keke.»"
+      },
+      alianza: {
+        rank: "El Pacto del Siglo · Fuego y Esmeralda",
+        title: "Un Mismo Estandarte",
+        theme: "unicaja",
+        body: "La obra maestra de Miguel Aguilera Gómez: convertir la rivalidad más temida en una hermandad imparable. Al fundir el espíritu del Trotasierra con el poder de Unicaja, Keke demostró que la verdadera supremacía nace de unir fuerzas.",
+        stats: [
+          { label: "Artífice", val: "Keke, el Trotasierra" },
+          { label: "Fuerzas Unidas", val: "Trotasierra + Unicaja" },
+          { label: "Propósito", val: "Vencer y Prosperar" },
+          { label: "Legado", val: "Eterno en el Reino" }
+        ],
+        quote: "«No todas las batallas se ganan con la espada; las más grandes se ganan forjando aliados.»"
+      },
+      reino: {
+        rank: "Dominio de Las Erillas · Tierra de Leyendas",
+        title: "El Reino Atlético",
+        theme: "gold",
+        body: "El vasto territorio competitivo donde se miden los más grandes clubes y atletas. Gracias a la visión de Keke, todo el reino fue testigo de cómo un destino que parecía sellado se transformó en el inicio de una hegemonía legendaria.",
+        stats: [
+          { label: "Capital Mística", val: "Pistas de Las Erillas" },
+          { label: "Soberano", val: "Keke" },
+          { label: "Era", val: "La Nueva Edad Dorada" },
+          { label: "Símbolo", val: "La Llama Eterna" }
+        ],
+        quote: "«Las leyendas se forjan construyendo alianzas capaces de cambiar el destino de todo un reino.»"
+      }
+    };
+
+    const backdrop = document.getElementById("codexBackdrop");
+    const modal = document.getElementById("codexModal");
+    const kekePortraitBox = document.getElementById("kekePortraitBox");
+    const modalEmblem = document.getElementById("modalEmblem");
+    const modalRank = document.getElementById("modalRank");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalBody = document.getElementById("modalBody");
+    const modalStats = document.getElementById("modalStats");
+    const modalQuote = document.getElementById("modalQuote");
+
+    function openLore(key) {
+      const item = LORE_DB[key];
+      if (!item) return;
+
+      modal.classList.toggle("unicaja-modal", item.theme === "unicaja");
+
+      if (item.hasPortrait) {
+        kekePortraitBox.classList.add("visible");
+        modalEmblem.style.display = "none";
+      } else {
+        kekePortraitBox.classList.remove("visible");
+        modalEmblem.style.display = "flex";
+        modalEmblem.innerHTML = EMBLEM_ICONS[key] || EMBLEM_ICONS.keke;
+      }
+
+      modalRank.textContent = item.rank;
+      modalTitle.textContent = item.title;
+      modalBody.textContent = item.body;
+      modalQuote.textContent = item.quote;
+
+      modalStats.innerHTML = item.stats
+        .map(
+          (s) => `
+          <div class="stat-pill">
+            <div class="stat-label">${s.label}</div>
+            <div class="stat-val">${s.val}</div>
+          </div>`
+        )
+        .join("");
+
+      backdrop.classList.add("active");
+    }
+
+    document.querySelectorAll("[data-lore]").forEach((el) => {
+      el.addEventListener("click", () => openLore(el.dataset.lore));
+    });
+
+    document.getElementById("codexClose").addEventListener("click", () => backdrop.classList.remove("active"));
+    backdrop.addEventListener("click", (e) => {
+      if (e.target === backdrop) backdrop.classList.remove("active");
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") backdrop.classList.remove("active");
+    });
+
+    // =========================================================================
+    // 4. CONTROLES DE LECTURA Y ECO SONORO
+    // =========================================================================
+    let fontSize = 1.32;
+    const storyBody = document.getElementById("storyBody");
+    document.getElementById("btnFontPlus").addEventListener("click", () => {
+      fontSize = Math.min(1.85, fontSize + 0.1);
+      storyBody.style.fontSize = fontSize + "rem";
+    });
+    document.getElementById("btnFontMinus").addEventListener("click", () => {
+      fontSize = Math.max(1.05, fontSize - 0.1);
+      storyBody.style.fontSize = fontSize + "rem";
+    });
+
+    window.addEventListener("scroll", () => {
+      const h = document.documentElement;
+      const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+      document.getElementById("readingProgress").style.width = (pct || 0) + "%";
+    });
+
+    let audioCtx = null;
+    let audioOn = false;
+    document.getElementById("btnAudio").addEventListener("click", function () {
+      if (!audioOn) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.value = 73.42;
+        gain.gain.value = 0.035;
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        audioOn = true;
+        this.textContent = "🔇 Silenciar Eco";
+      } else if (audioCtx) {
+        audioCtx.close();
+        audioOn = false;
+        this.textContent = "🔊 Eco Místico";
+      }
+    });
+  </script>
+</body>
+</html>
