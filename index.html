@@ -1,0 +1,2883 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>La Leyenda de Keke · Arena de Juegos y Crónicas de Las Erillas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-void: #040100;
+      --card-bg: rgba(13, 5, 2, 0.88);
+      --gold-pure: #fff5d6;
+      --gold-bright: #ffd166;
+      --gold-mid: #f59e0b;
+      --fire-orange: #ea580c;
+      --fire-crimson: #991b1b;
+      --unicaja-emerald: #10b981;
+      --unicaja-glow: #34d399;
+      --trotasierra-blue: #38bdf8;
+      --text-parchment: #f8ede3;
+      --text-muted: #cbb8a6;
+      --border-gold: rgba(245, 158, 11, 0.45);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      width: 100%;
+      max-width: 100%;
+      overflow-x: clip;
+    }
+
+    body {
+      background-color: var(--bg-void);
+      background-image:
+        radial-gradient(ellipse 85% 45% at 50% 0%, rgba(234, 88, 12, 0.28) 0%, transparent 60%),
+        radial-gradient(ellipse 70% 50% at 15% 45%, rgba(153, 27, 27, 0.22) 0%, transparent 60%),
+        radial-gradient(ellipse 70% 50% at 85% 65%, rgba(16, 185, 129, 0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 90% 45% at 50% 100%, rgba(234, 88, 12, 0.32) 0%, transparent 65%),
+        linear-gradient(180deg, #050100 0%, #110401 50%, #050100 100%);
+      color: var(--text-parchment);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      width: 100%;
+      max-width: 100%;
+      min-height: 100vh;
+      overflow-x: clip;
+      overflow-y: auto;
+      line-height: 1.88;
+      position: relative;
+    }
+
+    .vignette-overlay {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, transparent 42%, rgba(0, 0, 0, 0.82) 100%);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .reading-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      width: 0%;
+      background: linear-gradient(90deg, var(--fire-orange), var(--gold-bright), var(--unicaja-emerald));
+      box-shadow: 0 0 18px var(--gold-bright);
+      z-index: 120;
+      transition: width 0.12s ease-out;
+    }
+
+    /* =========================================================================
+       BARRA SUPERIOR HUD (MENÚ PRINCIPAL)
+       ========================================================================= */
+    .top-hud {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.55rem;
+      padding: 0.7rem 1.15rem;
+      background: rgba(8, 2, 1, 0.94);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border-gold);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.85), 0 1px 18px rgba(234, 88, 12, 0.25);
+    }
+
+    .hud-brand {
+      font-family: 'Cinzel', serif;
+      font-weight: 900;
+      font-size: 0.88rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold-bright);
+      text-shadow: 0 0 16px rgba(245, 158, 11, 0.75);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .hud-nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .btn-arcane {
+      font-family: 'Cinzel', serif;
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gold-pure);
+      background: linear-gradient(135deg, rgba(234, 88, 12, 0.32), rgba(120, 53, 15, 0.45));
+      border: 1px solid var(--border-gold);
+      padding: 0.45rem 0.85rem;
+      border-radius: 7px;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 0 12px rgba(234, 88, 12, 0.2);
+      transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, transform 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+    }
+
+    .btn-arcane:hover {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.52), rgba(234, 88, 12, 0.6));
+      border-color: var(--gold-bright);
+      box-shadow: 0 0 24px rgba(255, 209, 102, 0.65);
+    }
+
+    .btn-arcane:active {
+      transform: scale(0.96);
+    }
+
+    .btn-arcane.emerald-nav {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(6, 78, 59, 0.48));
+      border-color: rgba(52, 211, 153, 0.55);
+    }
+
+    .btn-arcane.emerald-nav:hover {
+      border-color: var(--unicaja-glow);
+      box-shadow: 0 0 24px rgba(52, 211, 153, 0.65);
+    }
+
+    .btn-arcane.blue-nav {
+      background: linear-gradient(135deg, rgba(2, 132, 199, 0.32), rgba(30, 58, 138, 0.52));
+      border-color: rgba(56, 189, 248, 0.55);
+    }
+
+    .btn-arcane.blue-nav:hover {
+      border-color: var(--trotasierra-blue);
+      box-shadow: 0 0 24px rgba(56, 189, 248, 0.65);
+    }
+
+    .hud-passport-pill {
+      font-family: 'Cinzel', serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 0.4rem 0.75rem;
+      border-radius: 999px;
+      border: 1px solid rgba(245, 158, 11, 0.5);
+      background: rgba(20, 8, 3, 0.9);
+      color: var(--gold-bright);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .hud-passport-pill.registered {
+      border-color: rgba(52, 211, 153, 0.6);
+      color: var(--unicaja-glow);
+    }
+
+    /* Contenedor Principal */
+    .chronicle-wrapper {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 5rem;
+    }
+
+    .ornate-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      margin: 0.75rem auto 1.25rem;
+      max-width: 460px;
+      width: 100%;
+      color: var(--gold-bright);
+      text-shadow: 0 0 14px rgba(245, 158, 11, 0.8);
+    }
+
+    .ornate-divider .line {
+      height: 1px;
+      flex: 1;
+      background: linear-gradient(90deg, transparent, var(--gold-bright), transparent);
+      box-shadow: 0 0 10px var(--gold-mid);
+    }
+
+    .section-heading {
+      text-align: center;
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1.42rem, 3.8vw, 2.25rem);
+      color: var(--gold-bright);
+      letter-spacing: 0.08em;
+      margin-bottom: 0.3rem;
+      text-shadow: 0 0 24px rgba(234, 88, 12, 0.75);
+    }
+
+    .section-subkicker {
+      text-align: center;
+      font-family: 'Cinzel', serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+
+    /* =========================================================================
+       BLOQUE 1: PORTADA DE JUEGOS COMPACTOS + PASAPORTE
+       ========================================================================= */
+    .games-hub-section {
+      width: 100%;
+      margin-bottom: 2.2rem;
+    }
+
+    .athlete-passport-card {
+      width: 100%;
+      max-width: 740px;
+      margin: 0 auto 1.5rem;
+      padding: 1rem 1.25rem;
+      background: linear-gradient(145deg, rgba(28, 12, 4, 0.95), rgba(10, 4, 2, 0.98));
+      border: 1.5px solid var(--gold-bright);
+      border-radius: 14px;
+      box-shadow: 0 16px 45px rgba(0, 0, 0, 0.88), 0 0 28px rgba(245, 158, 11, 0.22);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    @keyframes passportShake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-7px); }
+      40%, 80% { transform: translateX(7px); }
+    }
+
+    .athlete-passport-card.passport-alert {
+      border-color: #ef4444 !important;
+      box-shadow: 0 0 42px rgba(239, 68, 68, 0.8), inset 0 0 22px rgba(239, 68, 68, 0.3) !important;
+      animation: passportShake 0.45s ease-in-out;
+    }
+
+    .passport-top-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.55rem;
+    }
+
+    .passport-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.84rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gold-bright);
+    }
+
+    .passport-badge {
+      font-family: 'Cinzel', serif;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 0.22rem 0.68rem;
+      border-radius: 999px;
+      text-transform: uppercase;
+    }
+
+    .passport-badge.missing {
+      color: #fca5a5;
+      background: rgba(239, 68, 68, 0.22);
+      border: 1px solid rgba(239, 68, 68, 0.55);
+    }
+
+    .passport-badge.registered {
+      color: #6ee7b7;
+      background: rgba(16, 185, 129, 0.22);
+      border: 1px solid rgba(52, 211, 153, 0.55);
+    }
+
+    .passport-form-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+    }
+
+    .passport-input {
+      flex: 1;
+      min-width: 190px;
+      padding: 0.65rem 0.9rem;
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #ffffff;
+      background: rgba(5, 2, 1, 0.92);
+      border: 1.5px solid rgba(245, 158, 11, 0.55);
+      border-radius: 9px;
+      outline: none;
+    }
+
+    .passport-input:focus {
+      border-color: var(--gold-bright);
+      box-shadow: 0 0 16px rgba(255, 209, 102, 0.45);
+    }
+
+    .passport-save-btn {
+      font-family: 'Cinzel', serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: #ffffff;
+      background: linear-gradient(135deg, #d97706, #ea580c);
+      border: 1.5px solid var(--gold-bright);
+      padding: 0.65rem 1.2rem;
+      border-radius: 9px;
+      cursor: pointer;
+      box-shadow: 0 0 18px rgba(234, 88, 12, 0.45);
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
+    }
+
+    .passport-save-btn:hover {
+      box-shadow: 0 0 26px rgba(255, 209, 102, 0.75);
+    }
+
+    .passport-error-msg {
+      margin-top: 0.5rem;
+      font-family: 'Cinzel', serif;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: #f87171;
+      display: none;
+    }
+
+    .passport-error-msg.visible {
+      display: block;
+    }
+
+    /* Grid de 3 Tarjetas Compactas de Juegos */
+    .compact-games-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.15rem;
+    }
+
+    @media (max-width: 900px) {
+      .compact-games-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .compact-game-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: linear-gradient(160deg, rgba(24, 10, 4, 0.94), rgba(9, 3, 1, 0.98));
+      border: 1.5px solid var(--border-gold);
+      border-radius: 16px;
+      padding: 1.25rem;
+      box-shadow: 0 18px 48px rgba(0, 0, 0, 0.88), inset 0 0 24px rgba(245, 158, 11, 0.06);
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+      overflow: hidden;
+    }
+
+    .compact-game-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--gold-bright);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.94), 0 0 32px rgba(245, 158, 11, 0.35);
+    }
+
+    .compact-game-card.theme-emerald {
+      border-color: rgba(16, 185, 129, 0.5);
+    }
+
+    .compact-game-card.theme-emerald:hover {
+      border-color: var(--unicaja-glow);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.94), 0 0 32px rgba(16, 185, 129, 0.38);
+    }
+
+    .compact-game-card.theme-blue {
+      border-color: rgba(56, 189, 248, 0.5);
+    }
+
+    .compact-game-card.theme-blue:hover {
+      border-color: var(--trotasierra-blue);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.94), 0 0 32px rgba(56, 189, 248, 0.38);
+    }
+
+    .compact-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .compact-game-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.65rem;
+      background: rgba(245, 158, 11, 0.16);
+      border: 1px solid rgba(255, 209, 102, 0.45);
+      box-shadow: 0 0 18px rgba(245, 158, 11, 0.25);
+    }
+
+    .theme-emerald .compact-game-icon {
+      background: rgba(16, 185, 129, 0.16);
+      border-color: rgba(52, 211, 153, 0.45);
+      box-shadow: 0 0 18px rgba(16, 185, 129, 0.25);
+    }
+
+    .theme-blue .compact-game-icon {
+      background: rgba(2, 132, 199, 0.2);
+      border-color: rgba(56, 189, 248, 0.5);
+      box-shadow: 0 0 18px rgba(56, 189, 248, 0.25);
+    }
+
+    .compact-game-pill {
+      font-family: 'Cinzel', serif;
+      font-size: 0.66rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      color: var(--gold-bright);
+      background: rgba(245, 158, 11, 0.14);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+    }
+
+    .theme-emerald .compact-game-pill {
+      color: var(--unicaja-glow);
+      background: rgba(16, 185, 129, 0.14);
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+
+    .theme-blue .compact-game-pill {
+      color: #7dd3fc;
+      background: rgba(2, 132, 199, 0.18);
+      border-color: rgba(56, 189, 248, 0.4);
+    }
+
+    .compact-game-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.3;
+      margin-bottom: 0.45rem;
+    }
+
+    .compact-game-desc {
+      font-size: 1.02rem;
+      color: var(--text-muted);
+      line-height: 1.48;
+      margin-bottom: 1.1rem;
+    }
+
+    .btn-play-compact {
+      width: 100%;
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #ffffff;
+      background: linear-gradient(90deg, #b45309, #ea580c);
+      border: 1.5px solid var(--gold-bright);
+      padding: 0.72rem 1rem;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      box-shadow: 0 6px 22px rgba(234, 88, 12, 0.4);
+      transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
+    }
+
+    .btn-play-compact:hover {
+      filter: brightness(1.12);
+      box-shadow: 0 0 28px rgba(255, 209, 102, 0.7);
+    }
+
+    .btn-play-compact:active {
+      transform: scale(0.97);
+    }
+
+    .theme-emerald .btn-play-compact {
+      background: linear-gradient(90deg, #047857, #10b981);
+      border-color: var(--unicaja-glow);
+      box-shadow: 0 6px 22px rgba(16, 185, 129, 0.35);
+    }
+
+    .theme-blue .btn-play-compact {
+      background: linear-gradient(90deg, #1d4ed8, #0284c7);
+      border-color: var(--trotasierra-blue);
+      box-shadow: 0 6px 22px rgba(2, 132, 199, 0.4);
+    }
+
+    /* =========================================================================
+       BLOQUE 2: RANKING DESPLEGABLE CON PESTAÑAS (DEBAJO DEL MENÚ DE JUEGOS)
+       ========================================================================= */
+    .ranking-drawer-section {
+      width: 100%;
+      margin: 0 auto 3rem;
+      background: linear-gradient(160deg, rgba(20, 9, 4, 0.95), rgba(8, 3, 1, 0.98));
+      border: 1.5px solid var(--border-gold);
+      border-radius: 16px;
+      box-shadow: 0 22px 60px rgba(0, 0, 0, 0.9), 0 0 30px rgba(234, 88, 12, 0.18);
+      overflow: hidden;
+    }
+
+    .ranking-drawer-toggle {
+      width: 100%;
+      background: linear-gradient(90deg, rgba(234, 88, 12, 0.18), rgba(16, 8, 3, 0.9), rgba(16, 185, 129, 0.15));
+      border: none;
+      padding: 1.05rem 1.35rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      cursor: pointer;
+      color: var(--gold-bright);
+      text-align: left;
+    }
+
+    .ranking-drawer-toggle:hover {
+      background: linear-gradient(90deg, rgba(234, 88, 12, 0.28), rgba(24, 12, 5, 0.95), rgba(16, 185, 129, 0.22));
+    }
+
+    .ranking-drawer-title-group {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .ranking-drawer-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1.05rem, 2.6vw, 1.38rem);
+      font-weight: 700;
+      color: var(--gold-bright);
+      text-shadow: 0 0 14px rgba(245, 158, 11, 0.55);
+    }
+
+    .ranking-drawer-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .leaderboard-badge {
+      font-family: 'Cinzel', serif;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--unicaja-glow);
+      background: rgba(16, 185, 129, 0.14);
+      border: 1px solid rgba(52, 211, 153, 0.4);
+      padding: 0.26rem 0.68rem;
+      border-radius: 6px;
+      transition: all 0.25s ease;
+    }
+
+    .leaderboard-badge.live-flash {
+      color: #ffffff;
+      background: rgba(245, 158, 11, 0.38);
+      border-color: var(--gold-bright);
+      box-shadow: 0 0 14px rgba(255, 209, 102, 0.65);
+    }
+
+    .drawer-chevron {
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--gold-pure);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      padding: 0.3rem 0.75rem;
+      border-radius: 8px;
+      transition: transform 0.25s ease;
+    }
+
+    .ranking-drawer-body {
+      padding: 0 1.25rem 1.35rem;
+      border-top: 1px solid rgba(245, 158, 11, 0.22);
+    }
+
+    .ranking-drawer-body.collapsed {
+      display: none;
+    }
+
+    /* Pestañas del Ranking */
+    .ranking-tabs-bar {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.55rem;
+      margin: 1rem 0 1.1rem;
+    }
+
+    @media (max-width: 640px) {
+      .ranking-tabs-bar {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .ranking-tab-btn {
+      font-family: 'Cinzel', serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      background: rgba(10, 4, 2, 0.9);
+      border: 1px solid rgba(245, 158, 11, 0.28);
+      padding: 0.65rem 0.8rem;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+    }
+
+    .ranking-tab-btn:hover {
+      border-color: var(--gold-bright);
+      color: var(--gold-pure);
+    }
+
+    .ranking-tab-btn.active {
+      color: #ffffff;
+      background: linear-gradient(135deg, rgba(234, 88, 12, 0.42), rgba(180, 83, 9, 0.55));
+      border-color: var(--gold-bright);
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.35);
+    }
+
+    .ranking-tab-panel {
+      display: none;
+    }
+
+    .ranking-tab-panel.active {
+      display: block;
+    }
+
+    .leaderboard-table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .leaderboard-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+    }
+
+    .leaderboard-table th {
+      text-align: left;
+      padding: 0.55rem 0.65rem;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      border-bottom: 1px solid rgba(245, 158, 11, 0.28);
+      white-space: nowrap;
+    }
+
+    .leaderboard-table td {
+      padding: 0.62rem 0.65rem;
+      color: var(--text-parchment);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .leaderboard-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .leaderboard-table tr.is-current-player td {
+      background: rgba(245, 158, 11, 0.16);
+      color: var(--gold-bright);
+      font-weight: 700;
+    }
+
+    .leaderboard-placeholder-row td {
+      text-align: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      padding: 1.1rem;
+    }
+
+    /* =========================================================================
+       PESTAÑA / VISTA DEDICADA DE ARENA DE JUEGO EN GRANDE
+       ========================================================================= */
+    .arena-stage-view {
+      display: none;
+      width: 100%;
+      animation: fadeIn 0.22s ease;
+    }
+
+    .arena-stage-view.active {
+      display: block;
+    }
+
+    .home-portal-view.hidden-view {
+      display: none;
+    }
+
+    .arena-stage-topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      padding: 0.85rem 1.1rem;
+      background: rgba(14, 6, 2, 0.94);
+      border: 1.5px solid var(--border-gold);
+      border-radius: 14px;
+    }
+
+    .arena-switcher-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+    }
+
+    .arena-switch-btn {
+      font-family: 'Cinzel', serif;
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      background: rgba(5, 2, 1, 0.9);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      padding: 0.48rem 0.85rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .arena-switch-btn:hover {
+      border-color: var(--gold-bright);
+      color: #ffffff;
+    }
+
+    .arena-switch-btn.active {
+      color: #ffffff;
+      background: linear-gradient(135deg, #d97706, #ea580c);
+      border-color: var(--gold-bright);
+      box-shadow: 0 0 18px rgba(234, 88, 12, 0.5);
+    }
+
+    .game-arena-card {
+      width: 100%;
+      background: rgba(11, 5, 2, 0.95);
+      border: 1.5px solid var(--border-gold);
+      border-radius: 18px;
+      padding: 1.25rem;
+      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.92), 0 0 42px rgba(234, 88, 12, 0.22);
+    }
+
+    .game-card-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.95rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid rgba(245, 158, 11, 0.24);
+    }
+
+    .game-card-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1.1rem, 2.8vw, 1.5rem);
+      color: var(--gold-bright);
+      text-shadow: 0 0 14px rgba(234, 88, 12, 0.6);
+    }
+
+    .game-card-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.55rem;
+    }
+
+    .game-card-tag {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--unicaja-glow);
+      background: rgba(16, 185, 129, 0.14);
+      border: 1px solid rgba(52, 211, 153, 0.4);
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+    }
+
+    .game-iframe-shell {
+      position: relative;
+      width: 100%;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1.5px solid rgba(255, 209, 102, 0.35);
+      background: #060201;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.85);
+    }
+
+    .game-iframe-shell iframe {
+      display: block;
+      width: 100%;
+      height: 650px;
+      border: 0;
+    }
+
+    .btn-exit-fullscreen {
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      z-index: 9999;
+      display: none;
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #fff;
+      background: rgba(15, 6, 2, 0.92);
+      border: 1.5px solid var(--gold-bright);
+      padding: 0.5rem 0.9rem;
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.85);
+    }
+
+    .game-iframe-shell:fullscreen,
+    .game-iframe-shell:-webkit-full-screen {
+      width: 100vw !important;
+      height: 100vh !important;
+      border-radius: 0 !important;
+      border: 0 !important;
+      background: #020617 !important;
+    }
+
+    .game-iframe-shell:fullscreen iframe,
+    .game-iframe-shell:-webkit-full-screen iframe {
+      width: 100vw !important;
+      height: 100vh !important;
+    }
+
+    .game-iframe-shell:fullscreen .btn-exit-fullscreen,
+    .game-iframe-shell:-webkit-full-screen .btn-exit-fullscreen {
+      display: inline-flex;
+    }
+
+    @media (max-width: 768px) {
+      .game-iframe-shell iframe {
+        height: 460px;
+      }
+      .game-arena-card {
+        padding: 0.85rem;
+      }
+    }
+
+    @media (max-height: 520px) and (orientation: landscape) {
+      .game-iframe-shell iframe {
+        height: 84vh;
+      }
+    }
+
+    /* =========================================================================
+       BLOQUE 3: HISTORIA ÉPICA ORIGINAL (CABECERA, GRIMORIO, CÓDICE Y ALTAR)
+       ========================================================================= */
+    .story-chronicle-section {
+      padding-top: 1rem;
+      border-top: 1px solid rgba(245, 158, 11, 0.25);
+    }
+
+    .hero-sanctuary {
+      text-align: center;
+      padding: 1.5rem 0.5rem 1.8rem;
+      position: relative;
+    }
+
+    .crest-halo {
+      position: relative;
+      width: min(215px, 60vw);
+      height: 122px;
+      margin: 0 auto 1.4rem;
+      border-radius: 16px;
+      border: 2px solid var(--gold-bright);
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow:
+        0 0 38px rgba(255, 209, 102, 0.55),
+        0 0 75px rgba(234, 88, 12, 0.35),
+        inset 0 0 18px rgba(245, 158, 11, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .crest-halo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 8px;
+      display: block;
+      user-select: none;
+    }
+
+    .epic-kicker {
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--gold-bright);
+      text-shadow: 0 0 16px rgba(234, 88, 12, 0.85);
+      margin-bottom: 0.6rem;
+    }
+
+    .epic-title {
+      font-family: 'Cinzel Decorative', 'Cinzel', serif;
+      font-size: clamp(2rem, 6vw, 4rem);
+      font-weight: 900;
+      line-height: 1.14;
+      background: linear-gradient(180deg, #ffffff 5%, #ffe082 48%, #f97316 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 4px 28px rgba(234, 88, 12, 0.75));
+      margin-bottom: 0.8rem;
+      word-break: break-word;
+    }
+
+    .epic-subtitle {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(0.95rem, 2.2vw, 1.24rem);
+      color: var(--gold-pure);
+      letter-spacing: 0.07em;
+      max-width: 750px;
+      margin: 0 auto;
+      text-shadow: 0 2px 14px rgba(0, 0, 0, 0.9);
+    }
+
+    .story-font-toolbar {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1.1rem;
+    }
+
+    .panoramic-relic-frame {
+      position: relative;
+      width: 100%;
+      margin: 2rem auto 2.5rem;
+      border-radius: 14px;
+      border: 1.5px solid var(--gold-mid);
+      background: linear-gradient(135deg, rgba(22, 8, 3, 0.94), rgba(8, 3, 1, 0.98));
+      box-shadow:
+        0 24px 65px rgba(0, 0, 0, 0.9),
+        0 0 42px rgba(234, 88, 12, 0.36),
+        inset 0 0 25px rgba(255, 209, 102, 0.14);
+      overflow: hidden;
+    }
+
+    .ratio-16-5 {
+      aspect-ratio: 16 / 5;
+      min-height: 135px;
+    }
+
+    .ratio-4-1 {
+      aspect-ratio: 4 / 1;
+      min-height: 115px;
+    }
+
+    .panoramic-relic-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      user-select: none;
+    }
+
+    .panoramic-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 0.65rem 1rem;
+      background: linear-gradient(0deg, rgba(4, 1, 0, 0.92) 0%, rgba(4, 1, 0, 0.4) 65%, transparent 100%);
+      font-family: 'Cinzel', serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold-bright);
+      text-shadow: 0 0 12px rgba(234, 88, 12, 0.8);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+    }
+
+    .story-grimoire {
+      width: 100%;
+      max-width: 850px;
+      margin: 0 auto 3rem;
+      padding: clamp(1.5rem, 4vw, 3.8rem);
+      background: var(--card-bg);
+      border: 1.5px solid var(--border-gold);
+      border-radius: 16px;
+      box-shadow:
+        0 30px 85px rgba(0, 0, 0, 0.92),
+        0 0 50px rgba(234, 88, 12, 0.18),
+        inset 0 0 50px rgba(245, 158, 11, 0.08);
+      position: relative;
+    }
+
+    .corner-filigree {
+      position: absolute;
+      width: 36px;
+      height: 36px;
+      color: var(--gold-bright);
+      filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.7));
+      pointer-events: none;
+    }
+
+    .corner-tl { top: 8px; left: 8px; }
+    .corner-tr { top: 8px; right: 8px; transform: scaleX(-1); }
+    .corner-bl { bottom: 8px; left: 8px; transform: scaleY(-1); }
+    .corner-br { bottom: 8px; right: 8px; transform: scale(-1, -1); }
+
+    .grimoire-header-badge {
+      text-align: center;
+      margin-bottom: 1.8rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(245, 158, 11, 0.25);
+    }
+
+    .grimoire-rune-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold-bright);
+      text-shadow: 0 0 14px rgba(245, 158, 11, 0.65);
+    }
+
+    .grimoire-subhint {
+      font-size: 0.96rem;
+      font-style: italic;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    .story-body {
+      font-size: 1.32rem;
+      color: var(--text-parchment);
+      transition: font-size 0.2s ease;
+    }
+
+    .story-body p {
+      margin-bottom: 1.6rem;
+      text-align: left;
+    }
+
+    @media (min-width: 640px) {
+      .story-body p {
+        text-align: justify;
+      }
+    }
+
+    .story-body p:first-of-type::first-letter {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 3.6rem;
+      float: left;
+      line-height: 0.82;
+      padding-right: 0.7rem;
+      padding-top: 0.16rem;
+      color: var(--gold-bright);
+      text-shadow: 0 0 26px rgba(234, 88, 12, 0.9);
+    }
+
+    .story-body p:last-child {
+      margin-bottom: 0;
+      margin-top: 1.8rem;
+      padding: 1.1rem 1.25rem;
+      font-style: italic;
+      color: var(--gold-pure);
+      background: linear-gradient(90deg, rgba(245, 158, 11, 0.12), transparent);
+      border-left: 3px solid var(--gold-bright);
+      border-radius: 0 10px 10px 0;
+      box-shadow: inset 0 0 20px rgba(234, 88, 12, 0.08);
+    }
+
+    .lore-link {
+      font-weight: 700;
+      color: var(--gold-bright);
+      background: rgba(245, 158, 11, 0.15);
+      border-bottom: 1.5px solid rgba(255, 209, 102, 0.65);
+      padding: 0 0.3rem;
+      border-radius: 4px;
+      cursor: pointer;
+      text-shadow: 0 0 12px rgba(245, 158, 11, 0.45);
+      transition: background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .lore-link:hover {
+      color: #ffffff;
+      background: rgba(234, 88, 12, 0.45);
+      box-shadow: 0 0 20px rgba(255, 209, 102, 0.75);
+    }
+
+    .lore-link.unicaja-theme {
+      color: var(--unicaja-glow);
+      background: rgba(16, 185, 129, 0.16);
+      border-bottom-color: rgba(52, 211, 153, 0.75);
+      text-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
+    }
+
+    .lore-link.unicaja-theme:hover {
+      color: #ffffff;
+      background: rgba(16, 185, 129, 0.42);
+      box-shadow: 0 0 22px rgba(52, 211, 153, 0.8);
+    }
+
+    .compendium-section {
+      width: 100%;
+      max-width: 980px;
+      margin: 2.5rem auto 0;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
+      gap: 1.15rem;
+      margin: 1.6rem 0 2.5rem;
+    }
+
+    .entity-card {
+      position: relative;
+      background: linear-gradient(165deg, rgba(24, 10, 4, 0.92), rgba(10, 4, 2, 0.95));
+      border: 1px solid var(--border-gold);
+      border-radius: 14px;
+      padding: 1.5rem 1.15rem;
+      text-align: center;
+      cursor: pointer;
+      box-shadow: 0 16px 42px rgba(0, 0, 0, 0.85), inset 0 0 24px rgba(245, 158, 11, 0.06);
+      transition: transform 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease;
+    }
+
+    .entity-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--gold-bright);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.92), 0 0 34px rgba(245, 158, 11, 0.45);
+    }
+
+    .entity-card.unicaja-card {
+      border-color: rgba(16, 185, 129, 0.48);
+      box-shadow: 0 16px 42px rgba(0, 0, 0, 0.85), inset 0 0 24px rgba(16, 185, 129, 0.08);
+    }
+
+    .entity-card.unicaja-card:hover {
+      border-color: var(--unicaja-glow);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.92), 0 0 36px rgba(16, 185, 129, 0.5);
+    }
+
+    .emblem-medallion {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 0.85rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle, rgba(245, 158, 11, 0.25), rgba(15, 6, 2, 0.9));
+      border: 1.5px solid var(--gold-bright);
+      color: var(--gold-bright);
+      box-shadow: 0 0 22px rgba(245, 158, 11, 0.4);
+    }
+
+    .unicaja-card .emblem-medallion {
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.28), rgba(4, 18, 12, 0.9));
+      border-color: var(--unicaja-glow);
+      color: var(--unicaja-glow);
+      box-shadow: 0 0 22px rgba(16, 185, 129, 0.45);
+    }
+
+    .entity-tag {
+      font-family: 'Cinzel', serif;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gold-mid);
+      margin-bottom: 0.35rem;
+    }
+
+    .unicaja-card .entity-tag {
+      color: var(--unicaja-emerald);
+    }
+
+    .entity-name {
+      font-family: 'Cinzel', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 0.4rem;
+    }
+
+    .entity-desc {
+      font-size: 0.96rem;
+      color: var(--text-muted);
+      line-height: 1.48;
+    }
+
+    .alliance-altar {
+      position: relative;
+      text-align: center;
+      padding: 2.2rem 1.2rem;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(135deg, rgba(234, 88, 12, 0.18), rgba(14, 7, 3, 0.92), rgba(16, 185, 129, 0.18));
+      border: 1.5px solid var(--gold-bright);
+      border-radius: 18px;
+      box-shadow:
+        0 26px 70px rgba(0, 0, 0, 0.92),
+        0 0 48px rgba(245, 158, 11, 0.28),
+        inset 0 0 35px rgba(16, 185, 129, 0.12);
+    }
+
+    .hype-kicker {
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold-bright);
+      margin-bottom: 0.5rem;
+    }
+
+    .hype-counter-box {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      padding: 0.7rem 1.8rem;
+      margin: 0.65rem auto 1rem;
+      max-width: 100%;
+      background: rgba(5, 2, 1, 0.85);
+      border: 1.5px solid rgba(255, 209, 102, 0.55);
+      border-radius: 999px;
+      box-shadow: 0 0 30px rgba(234, 88, 12, 0.35), inset 0 0 18px rgba(16, 185, 129, 0.2);
+    }
+
+    .hype-number {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 900;
+      background: linear-gradient(90deg, #ffd166, #ffffff, #34d399);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 14px rgba(255, 209, 102, 0.6));
+      transition: transform 0.14s ease;
+    }
+
+    .hype-number.bump {
+      transform: scale(1.16);
+    }
+
+    .alliance-status {
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      letter-spacing: 0.08em;
+      color: var(--gold-pure);
+      margin-bottom: 1.3rem;
+    }
+
+    .btn-seal-alliance {
+      position: relative;
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(0.88rem, 2.4vw, 1.12rem);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: #ffffff;
+      background: linear-gradient(90deg, #b45309, #ea580c, #059669);
+      border: 2px solid var(--gold-bright);
+      padding: 0.95rem 1.8rem;
+      max-width: 100%;
+      border-radius: 999px;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 0 36px rgba(245, 158, 11, 0.55), 0 0 24px rgba(16, 185, 129, 0.35);
+      transition: transform 0.12s ease, box-shadow 0.25s ease;
+    }
+
+    .btn-seal-alliance:hover {
+      box-shadow: 0 0 52px rgba(255, 209, 102, 0.85), 0 0 38px rgba(52, 211, 153, 0.65);
+    }
+
+    .btn-seal-alliance:active {
+      transform: scale(0.95);
+    }
+
+    .hype-subnote {
+      margin-top: 0.9rem;
+      font-size: 0.94rem;
+      font-style: italic;
+      color: var(--text-muted);
+    }
+
+    /* Flotadores +1 */
+    .floating-vote {
+      position: fixed;
+      pointer-events: none;
+      font-family: 'Cinzel Decorative', serif;
+      font-weight: 900;
+      font-size: 1.35rem;
+      z-index: 300;
+      text-shadow: 0 0 14px rgba(0, 0, 0, 0.95);
+      animation: floatUpVote 0.95s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes floatUpVote {
+      0% { opacity: 1; transform: translate(-50%, 0) scale(0.8); }
+      40% { opacity: 1; transform: translate(-50%, -38px) scale(1.18); }
+      100% { opacity: 0; transform: translate(-50%, -88px) scale(0.95); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Modal del Códice */
+    .codex-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 1, 0, 0.86);
+      backdrop-filter: blur(10px);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+
+    .codex-backdrop.active {
+      display: flex;
+      animation: fadeIn 0.22s ease;
+    }
+
+    .codex-modal {
+      width: 100%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: linear-gradient(160deg, #1a0a04 0%, #090301 100%);
+      border: 1.5px solid var(--gold-bright);
+      border-radius: 16px;
+      padding: 1.75rem 1.4rem;
+      position: relative;
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.96), 0 0 50px rgba(234, 88, 12, 0.45);
+    }
+
+    .codex-modal.unicaja-modal {
+      border-color: var(--unicaja-glow);
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.96), 0 0 50px rgba(16, 185, 129, 0.45);
+    }
+
+    .codex-close {
+      position: absolute;
+      top: 0.85rem;
+      right: 0.85rem;
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #ffffff;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      font-size: 1.1rem;
+      cursor: pointer;
+      z-index: 5;
+    }
+
+    .keke-square-portrait {
+      position: relative;
+      width: min(220px, 65vw);
+      height: min(220px, 65vw);
+      aspect-ratio: 1 / 1;
+      margin: 0 auto 1.15rem;
+      border-radius: 14px;
+      border: 2px solid var(--gold-bright);
+      background: radial-gradient(circle at center, rgba(234, 88, 12, 0.25), rgba(8, 3, 1, 0.96));
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.9), 0 0 36px rgba(255, 209, 102, 0.5);
+      overflow: hidden;
+      display: none;
+    }
+
+    .keke-square-portrait.visible {
+      display: block;
+    }
+
+    .keke-square-portrait img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .modal-emblem-wrap {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.85rem;
+      background: radial-gradient(circle, rgba(245, 158, 11, 0.25), rgba(14, 5, 2, 0.95));
+      border: 1.5px solid var(--gold-bright);
+      color: var(--gold-bright);
+    }
+
+    .unicaja-modal .modal-emblem-wrap {
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.25), rgba(4, 18, 12, 0.95));
+      border-color: var(--unicaja-glow);
+      color: var(--unicaja-glow);
+    }
+
+    .modal-rank {
+      font-family: 'Cinzel', serif;
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold-mid);
+      margin-bottom: 0.35rem;
+    }
+
+    .unicaja-modal .modal-rank {
+      color: var(--unicaja-glow);
+    }
+
+    .modal-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1.4rem, 4vw, 1.75rem);
+      color: #ffffff;
+      margin-bottom: 0.85rem;
+    }
+
+    .modal-body {
+      font-size: 1.12rem;
+      color: var(--text-parchment);
+      line-height: 1.65;
+      margin-bottom: 1.15rem;
+    }
+
+    .modal-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0.6rem;
+      margin-bottom: 1.15rem;
+    }
+
+    .stat-pill {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(245, 158, 11, 0.28);
+      border-radius: 8px;
+      padding: 0.5rem 0.7rem;
+    }
+
+    .unicaja-modal .stat-pill {
+      border-color: rgba(16, 185, 129, 0.34);
+    }
+
+    .stat-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .stat-val {
+      font-family: 'Cinzel', serif;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--gold-bright);
+    }
+
+    .unicaja-modal .stat-val {
+      color: var(--unicaja-glow);
+    }
+
+    .modal-quote {
+      font-style: italic;
+      font-size: 1.08rem;
+      color: var(--gold-pure);
+      border-left: 2px solid var(--gold-mid);
+      padding-left: 0.9rem;
+    }
+
+    .unicaja-modal .modal-quote {
+      border-left-color: var(--unicaja-emerald);
+    }
+  </style>
+</head>
+<body>
+  <div class="vignette-overlay"></div>
+  <div class="reading-progress" id="readingProgress"></div>
+
+  <!-- =========================================================================
+       MENÚ PRINCIPAL SUPERIOR FIJO
+       ========================================================================= -->
+  <header class="top-hud">
+    <a class="hud-brand" id="navLogoHome">
+      <span>🔥 Las Erillas · Keke</span>
+    </a>
+    <nav class="hud-nav-links">
+      <button type="button" class="btn-arcane" id="navBtnGames">🎮 Juegos</button>
+      <button type="button" class="btn-arcane emerald-nav" id="navBtnRanking">🏆 Ranking</button>
+      <button type="button" class="btn-arcane blue-nav" id="navBtnStory">📜 Historia</button>
+      <button type="button" class="hud-passport-pill" id="hudPassportBtn" title="Tu Pasaporte de Atleta">
+        🪪 <span id="hudPassportName">Sin nombre</span>
+      </button>
+    </nav>
+  </header>
+
+  <main class="chronicle-wrapper">
+
+    <!-- =======================================================================
+         VISTA 1: PORTADA PRINCIPAL (JUEGOS COMPACTOS -> RANKING -> HISTORIA)
+         ======================================================================= -->
+    <div class="home-portal-view" id="homePortalView">
+
+      <!-- BLOQUE 1: ARENA DE JUEGOS COMPACTOS -->
+      <section class="games-hub-section" id="seccion-juegos">
+        <div class="section-subkicker">✦ Trotasierra Hornachuelos & Unicaja Jaén ✦</div>
+        <h1 class="section-heading">Juegos de Las Erillas</h1>
+
+        <div class="ornate-divider">
+          <span class="line"></span>
+          <span>🏃‍♂️</span>
+          <span>👑</span>
+          <span>🏅</span>
+          <span class="line"></span>
+        </div>
+
+        <!-- Pasaporte Oficial de Atleta (Compacto arriba de los 3 juegos) -->
+        <div class="athlete-passport-card" id="passportCard">
+          <div class="passport-top-row">
+            <span class="passport-label">🪪 Tu Pasaporte de Atleta (Obligatorio para puntuar)</span>
+            <span class="passport-badge missing" id="passportBadge">Sin registrar</span>
+          </div>
+          <div class="passport-form-row">
+            <input
+              type="text"
+              id="athleteNameInput"
+              class="passport-input"
+              maxlength="20"
+              placeholder="Escribe tu nombre o apodo..."
+            />
+            <button type="button" id="btnSaveAthlete" class="passport-save-btn">
+              Guardar Nombre
+            </button>
+          </div>
+          <div class="passport-error-msg" id="passportErrorMsg">
+            ⚠️ ¡Introduce y guarda tu nombre antes de entrar a jugar!
+          </div>
+        </div>
+
+        <!-- Grid de 3 Tarjetas Compactas -->
+        <div class="compact-games-grid">
+          <!-- Tarjeta Juego 1 -->
+          <article class="compact-game-card">
+            <div>
+              <div class="compact-card-top">
+                <div class="compact-game-icon">🏃‍♂️</div>
+                <span class="compact-game-pill">Meta: 1.000 PTS</span>
+              </div>
+              <h2 class="compact-game-title">I. Sprint Atlético</h2>
+              <p class="compact-game-desc">
+                Corre por el tartán de Las Erillas esquivando rivales y obstáculos hasta sellar el hermanamiento de los clubes.
+              </p>
+            </div>
+            <button type="button" class="btn-play-compact" data-open-game="1">
+              ▶ Jugar Sprint
+            </button>
+          </article>
+
+          <!-- Tarjeta Juego 2 -->
+          <article class="compact-game-card theme-emerald">
+            <div>
+              <div class="compact-card-top">
+                <div class="compact-game-icon">👑</div>
+                <span class="compact-game-pill">6 Niveles · 18 ⭐</span>
+              </div>
+              <h2 class="compact-game-title">II. La Batalla Suprema</h2>
+              <p class="compact-game-desc">
+                Comanda al Dios Keke y sus tropas en 6 niveles épicos hasta forjar la alianza definitiva con Unicaja.
+              </p>
+            </div>
+            <button type="button" class="btn-play-compact" data-open-game="2">
+              ▶ Jugar Batalla
+            </button>
+          </article>
+
+          <!-- Tarjeta Juego 3 -->
+          <article class="compact-game-card theme-blue">
+            <div>
+              <div class="compact-card-top">
+                <div class="compact-game-icon">🏅</div>
+                <span class="compact-game-pill">Récord Mundial: 8.95m</span>
+              </div>
+              <h2 class="compact-game-title">III. Salto de Longitud</h2>
+              <p class="compact-game-desc">
+                Domina el compás del estadio, apura la tabla al milímetro y vuela en tijera en el duelo Trotasierra vs Unicaja.
+              </p>
+            </div>
+            <button type="button" class="btn-play-compact" data-open-game="3">
+              ▶ Jugar Longitud
+            </button>
+          </article>
+        </div>
+      </section>
+
+      <!-- BLOQUE 2: RANKING DESPLEGABLE CON PESTAÑAS (JUSTO DEBAJO DE LOS JUEGOS) -->
+      <section class="ranking-drawer-section" id="seccion-ranking">
+        <button type="button" class="ranking-drawer-toggle" id="btnToggleRankingDrawer" aria-expanded="true">
+          <div class="ranking-drawer-title-group">
+            <span style="font-size: 1.45rem;">🏆</span>
+            <span class="ranking-drawer-title">Salón de la Fama · Rankings en Vivo</span>
+          </div>
+          <div class="ranking-drawer-meta">
+            <span class="leaderboard-badge" id="rankingLiveStatus">En Directo</span>
+            <span class="drawer-chevron" id="rankingDrawerChevron">▲ Ocultar</span>
+          </div>
+        </button>
+
+        <div class="ranking-drawer-body" id="rankingDrawerBody">
+          <div class="ranking-tabs-bar">
+            <button type="button" class="ranking-tab-btn active" data-rank-tab="tab-j1">
+              🏃‍♂️ Sprint Atlético
+            </button>
+            <button type="button" class="ranking-tab-btn" data-rank-tab="tab-j2">
+              👑 La Batalla Suprema
+            </button>
+            <button type="button" class="ranking-tab-btn" data-rank-tab="tab-j3">
+              🏅 Salto de Longitud
+            </button>
+          </div>
+
+          <!-- Pestaña Tabla Juego 1 -->
+          <div class="ranking-tab-panel active" id="tab-j1">
+            <div class="leaderboard-table-wrap">
+              <table class="leaderboard-table">
+                <thead>
+                  <tr>
+                    <th>Puesto</th>
+                    <th>Atleta</th>
+                    <th>Récord PTS</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody id="leaderboard-juego1-body">
+                  <tr class="leaderboard-placeholder-row">
+                    <td colspan="4">Cargando clasificaciones de Sprint Atlético...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Pestaña Tabla Juego 2 -->
+          <div class="ranking-tab-panel" id="tab-j2">
+            <div class="leaderboard-table-wrap">
+              <table class="leaderboard-table">
+                <thead>
+                  <tr>
+                    <th>Puesto</th>
+                    <th>Atleta</th>
+                    <th>Nivel Alcanzado</th>
+                    <th>Estrellas</th>
+                  </tr>
+                </thead>
+                <tbody id="leaderboard-juego2-body">
+                  <tr class="leaderboard-placeholder-row">
+                    <td colspan="4">Cargando progreso de La Batalla Suprema...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Pestaña Tabla Juego 3 -->
+          <div class="ranking-tab-panel" id="tab-j3">
+            <div class="leaderboard-table-wrap">
+              <table class="leaderboard-table">
+                <thead>
+                  <tr>
+                    <th>Puesto</th>
+                    <th>Atleta</th>
+                    <th>Club</th>
+                    <th>Marca Oficial</th>
+                    <th>Viento</th>
+                  </tr>
+                </thead>
+                <tbody id="leaderboard-juego3-body">
+                  <tr class="leaderboard-placeholder-row">
+                    <td colspan="5">Cargando marcas de Salto de Longitud...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- BLOQUE 3: LA HISTORIA ÉPICA ORIGINAL -->
+      <div class="story-chronicle-section" id="seccion-historia">
+        <section class="hero-sanctuary">
+          <div class="crest-halo">
+            <img src="assets/logo-trotasierra.png" alt="Logo Oficial Club de Atletismo Trotasierra" draggable="false" />
+          </div>
+
+          <div class="epic-kicker">✦ Códice Supremo del Reino Atlético ✦</div>
+          <h2 class="epic-title">Keke, el Trotasierra</h2>
+
+          <div class="ornate-divider">
+            <span class="line"></span>
+            <span>⚔️</span>
+            <span>👑</span>
+            <span>🔥</span>
+            <span class="line"></span>
+          </div>
+
+          <p class="epic-subtitle">La epopeya de cómo el Señor de Las Erillas salvó el destino del club y forjó el pacto eterno con Unicaja</p>
+
+          <div class="story-font-toolbar">
+            <button type="button" class="btn-arcane" id="btnFontMinus">A- Letra</button>
+            <button type="button" class="btn-arcane" id="btnFontPlus">A+ Letra</button>
+            <button type="button" class="btn-arcane" id="btnAudio">🔊 Eco Místico</button>
+          </div>
+        </section>
+
+        <!-- BANNER PANORÁMICO 1 -->
+        <section class="panoramic-relic-frame ratio-16-5">
+          <img src="assets/erillas.jpg" alt="Vista panorámica mágica del Reino de Las Erillas" draggable="false" />
+          <div class="panoramic-caption">
+            <span>✦ Santuario de Las Erillas · Reino del Trotasierra</span>
+            <span>Vista Suprema ✦</span>
+          </div>
+        </section>
+
+        <!-- GRIMORIO ORNAMENTADO DE LA HISTORIA -->
+        <article class="story-grimoire">
+          <svg class="corner-filigree corner-tl" viewBox="0 0 64 64" fill="none">
+            <path d="M4 60V16C4 9.37 9.37 4 16 4H60" stroke="currentColor" stroke-width="2"/>
+            <path d="M12 46V20C12 15.58 15.58 12 20 12H46" stroke="currentColor" stroke-width="1.2" opacity="0.7"/>
+            <circle cx="16" cy="16" r="3.5" fill="currentColor"/>
+          </svg>
+          <svg class="corner-filigree corner-tr" viewBox="0 0 64 64" fill="none">
+            <path d="M4 60V16C4 9.37 9.37 4 16 4H60" stroke="currentColor" stroke-width="2"/>
+            <path d="M12 46V20C12 15.58 15.58 12 20 12H46" stroke="currentColor" stroke-width="1.2" opacity="0.7"/>
+            <circle cx="16" cy="16" r="3.5" fill="currentColor"/>
+          </svg>
+          <svg class="corner-filigree corner-bl" viewBox="0 0 64 64" fill="none">
+            <path d="M4 60V16C4 9.37 9.37 4 16 4H60" stroke="currentColor" stroke-width="2"/>
+            <path d="M12 46V20C12 15.58 15.58 12 20 12H46" stroke="currentColor" stroke-width="1.2" opacity="0.7"/>
+            <circle cx="16" cy="16" r="3.5" fill="currentColor"/>
+          </svg>
+          <svg class="corner-filigree corner-br" viewBox="0 0 64 64" fill="none">
+            <path d="M4 60V16C4 9.37 9.37 4 16 4H60" stroke="currentColor" stroke-width="2"/>
+            <path d="M12 46V20C12 15.58 15.58 12 20 12H46" stroke="currentColor" stroke-width="1.2" opacity="0.7"/>
+            <circle cx="16" cy="16" r="3.5" fill="currentColor"/>
+          </svg>
+
+          <div class="grimoire-header-badge">
+            <div class="grimoire-rune-title">✧ Crónica Sagrada del Reino ✧</div>
+            <div class="grimoire-subhint">Pulsa sobre los nombres y reliquias iluminadas en el relato para revelar su poder</div>
+          </div>
+
+          <div class="story-body" id="storyBody">
+            <p>
+              Ante la amenaza de perder a algunos de sus <span class="lore-link" data-lore="atletas">atletas</span>, el destino del <span class="lore-link" data-lore="club">club</span> pendía de un hilo. Todo parecía perdido: las salidas eran inminentes y las esperanzas de mantener unido al equipo se desvanecían con cada día que pasaba. Los <span class="lore-link" data-lore="atletas">atletas</span> estaban prácticamente fuera del <span class="lore-link" data-lore="club">club</span> y la oscuridad comenzaba a cubrir lo que tanto había costado construir.
+            </p>
+
+            <p>
+              Pero cuando todo parecía llegar a su fin, surgió una figura que se negó a aceptar aquel desenlace. <span class="lore-link" data-lore="keke">Miguel Aguilera Gómez</span>, conocido por todos como <span class="lore-link" data-lore="keke">Keke</span>, al enterarse de la situación, no dudó ni un instante en dar un paso al frente. Allí donde otros veían una batalla perdida, él vio una última oportunidad de luchar.
+            </p>
+
+            <p>
+              Sin embargo, en esta epopeya había un adversario cuya sombra llevaba tiempo proyectándose sobre el horizonte: el poderoso <span class="lore-link unicaja-theme" data-lore="unicaja">Unicaja</span>, antiguo rival y amenaza para la estabilidad del proyecto. Lo que durante tanto tiempo había sido una rivalidad parecía destinado a convertirse en una guerra interminable.
+            </p>
+
+            <p>
+              Pero <span class="lore-link" data-lore="keke">Keke</span>, demostrando una visión que iba mucho más allá de cualquier enfrentamiento, comprendió que no todas las batallas se ganan con la espada. Y así, en un giro inesperado de los acontecimientos, decidió unir fuerzas con aquel que una vez fue su enemigo. <span class="lore-link unicaja-theme" data-lore="unicaja">Unicaja</span> y <span class="lore-link" data-lore="keke">Keke</span> dejaron atrás sus diferencias para caminar bajo un <span class="lore-link" data-lore="alianza">mismo estandarte</span>, comprendiendo que juntos podían alcanzar cotas que por separado parecían imposibles.
+            </p>
+
+            <p>
+              La <span class="lore-link" data-lore="alianza">alianza</span> cambió el curso de la historia. Los antiguos rivales se convirtieron en compañeros de una misma causa, unidos por un propósito común: vencer las adversidades, proteger a sus <span class="lore-link" data-lore="atletas">atletas</span> y prosperar juntos.
+            </p>
+
+            <p>
+              Y mientras el destino del <span class="lore-link" data-lore="club">club</span> volvía a escribirse, <span class="lore-link" data-lore="keke">Keke</span> demostró una vez más que su grandeza no residía únicamente en resistir las tormentas, sino también en saber convertir a sus enemigos en aliados.
+            </p>
+
+            <p>
+              Porque las leyendas no se forjan solamente conquistando territorios, sino construyendo <span class="lore-link" data-lore="alianza">alianzas</span> capaces de cambiar el destino de todo un <span class="lore-link" data-lore="reino">reino</span>.
+            </p>
+          </div>
+        </article>
+
+        <!-- BANNER PANORÁMICO 2 -->
+        <section class="panoramic-relic-frame ratio-4-1">
+          <img src="assets/erillas2.jpg" alt="La pista sagrada de Las Erillas iluminada por runas" draggable="false" />
+          <div class="panoramic-caption">
+            <span>✦ Pista Sagrada de Las Erillas · Donde se selló el destino</span>
+            <span>Arena Legendaria ✦</span>
+          </div>
+        </section>
+
+        <!-- COMPENDIO DE EMBLEMAS Y PERSONAJES -->
+        <section class="compendium-section">
+          <h2 class="section-heading">Códice de los Inmortales</h2>
+
+          <div class="ornate-divider">
+            <span class="line"></span>
+            <span>🛡️</span>
+            <span>✦</span>
+            <span>🛡️</span>
+            <span class="line"></span>
+          </div>
+
+          <div class="cards-grid">
+            <div class="entity-card" data-lore="keke">
+              <div class="emblem-medallion">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path d="M3 17l3-9 6 5 6-5 3 9H3z" />
+                  <path d="M4 20h16" />
+                  <circle cx="12" cy="5" r="1.5" fill="currentColor" />
+                </svg>
+              </div>
+              <div class="entity-tag">Dios Legendario · Estratega</div>
+              <div class="entity-name">Keke (Miguel Aguilera)</div>
+              <div class="entity-desc">El soberano absoluto del Trotasierra que doblegó la tormenta y salvó el reino.</div>
+            </div>
+
+            <div class="entity-card unicaja-card" data-lore="unicaja">
+              <div class="emblem-medallion">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path d="M12 2l8 4v6c0 5.2-3.4 9.7-8 11-4.6-1.3-8-5.8-8-11V6l8-4z" />
+                  <path d="M12 7v10M8 11l4-4 4 4" />
+                </svg>
+              </div>
+              <div class="entity-tag">Titán Esmeralda · Aliado</div>
+              <div class="entity-name">Unicaja</div>
+              <div class="entity-desc">Antiguo coloso rival cuya fuerza verde se unió al fuego de Keke bajo un solo estandarte.</div>
+            </div>
+
+            <div class="entity-card" data-lore="club">
+              <div class="emblem-medallion">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path d="M12 2c2.5 3.5 5 6.2 5 10a5 5 0 01-10 0c0-2.1 1.1-4.2 2.5-6 .3 1.7 1.4 2.7 2.5 2.7 0-2.5-.5-4.7 0-6.7z" />
+                  <path d="M8 21h8" />
+                </svg>
+              </div>
+              <div class="entity-tag">Bastión Sagrado</div>
+              <div class="entity-name">Club Trotasierra</div>
+              <div class="entity-desc">La fortaleza atlética de Hornachuelos y Las Erillas, renacida de sus cenizas.</div>
+            </div>
+
+            <div class="entity-card" data-lore="reino">
+              <div class="emblem-medallion">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9 12 2" />
+                  <circle cx="12" cy="12" r="2.2" fill="currentColor" />
+                </svg>
+              </div>
+              <div class="entity-tag">Dominio Eterno</div>
+              <div class="entity-name">Las Erillas y el Reino</div>
+              <div class="entity-desc">Las pistas místicas donde se forjan las leyendas y el futuro del atletismo.</div>
+            </div>
+          </div>
+
+          <!-- ALTAR GLOBAL DE HYPE CONECTADO A FIREBASE -->
+          <div class="alliance-altar">
+            <div class="hype-kicker">✦ Altar Mundial de Hype · Trotasierra & Unicaja ✦</div>
+
+            <div class="hype-counter-box">
+              <span style="font-size: 1.6rem;">🔥</span>
+              <span class="hype-number" id="hypeCounter">...</span>
+              <span style="font-size: 1.6rem;">💚</span>
+            </div>
+
+            <div class="alliance-status" id="allianceStatus">Llamas acumuladas en todo el reino por la Alianza Eterna</div>
+
+            <button type="button" class="btn-seal-alliance" id="btnHypeAlliance">🔥 Avivar la Llama de Keke & Unicaja 💚</button>
+
+            <div class="hype-subnote" id="syncInfo">Pulsa tantas veces como quieras para sumar fuegos de apoyo en tiempo real</div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- =======================================================================
+         VISTA 2: PESTAÑA DEDICADA DE JUEGO EN GRANDE (PANTALLA COMPLETA Y MÁS)
+         ======================================================================= -->
+    <section class="arena-stage-view" id="arenaStageView">
+      <div class="arena-stage-topbar">
+        <button type="button" class="btn-arcane" id="btnBackToHome">
+          ← Volver a la Portada
+        </button>
+
+        <div class="arena-switcher-tabs">
+          <button type="button" class="arena-switch-btn active" data-stage-tab="1">🏃‍♂️ I. Sprint</button>
+          <button type="button" class="arena-switch-btn" data-stage-tab="2">👑 II. Batalla</button>
+          <button type="button" class="arena-switch-btn" data-stage-tab="3">🏅 III. Longitud</button>
+        </div>
+
+        <button type="button" class="btn-arcane emerald-nav" id="btnStageFullscreen">
+          ⛶ Pantalla Completa
+        </button>
+      </div>
+
+      <div class="game-arena-card">
+        <div class="game-card-header">
+          <h2 class="game-card-title" id="stageGameTitle">I. Sprint Atlético: Trotasierra vs Unicaja</h2>
+          <div class="game-card-actions">
+            <span class="game-card-tag" id="stageGameTag">Meta Hermanamiento: 1000 PTS</span>
+            <span class="leaderboard-badge" id="stageLiveFeedback">Marcas conectadas en vivo</span>
+          </div>
+        </div>
+
+        <div class="game-iframe-shell" id="stageIframeShell">
+          <button type="button" class="btn-exit-fullscreen" id="btnExitStageFullscreen">✕ Salir Pantalla Completa</button>
+          <iframe id="stageGameIframe" src="about:blank" title="Arena de Juego Las Erillas" allow="fullscreen" allowfullscreen></iframe>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modal del Códice -->
+  <div class="codex-backdrop" id="codexBackdrop">
+    <div class="codex-modal" id="codexModal">
+      <button class="codex-close" id="codexClose" aria-label="Cerrar">✕</button>
+
+      <div class="keke-square-portrait" id="kekePortraitBox">
+        <img src="assets/Keke-dragon.jpg" alt="Keke, el Señor de los Dragones" draggable="false" />
+      </div>
+
+      <div class="modal-emblem-wrap" id="modalEmblem"></div>
+      <div class="modal-rank" id="modalRank"></div>
+      <h3 class="modal-title" id="modalTitle"></h3>
+      <p class="modal-body" id="modalBody"></p>
+      <div class="modal-stats" id="modalStats"></div>
+      <blockquote class="modal-quote" id="modalQuote"></blockquote>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // 0. PASAPORTE DE ATLETA + NAVEGACIÓN ENTRE PORTADA Y ARENA EN GRANDE
+    // =========================================================================
+    const ATHLETE_STORAGE_KEY = "keke_athlete_name";
+    const passportCard = document.getElementById("passportCard");
+    const passportBadge = document.getElementById("passportBadge");
+    const athleteInput = document.getElementById("athleteNameInput");
+    const btnSaveAthlete = document.getElementById("btnSaveAthlete");
+    const passportErrorMsg = document.getElementById("passportErrorMsg");
+    const hudPassportBtn = document.getElementById("hudPassportBtn");
+    const hudPassportName = document.getElementById("hudPassportName");
+
+    const homePortalView = document.getElementById("homePortalView");
+    const arenaStageView = document.getElementById("arenaStageView");
+    const stageGameIframe = document.getElementById("stageGameIframe");
+    const stageIframeShell = document.getElementById("stageIframeShell");
+    const stageGameTitle = document.getElementById("stageGameTitle");
+    const stageGameTag = document.getElementById("stageGameTag");
+
+    const GAMES_CATALOG = {
+      "1": {
+        id: "1",
+        file: "juego1.html",
+        title: "I. Sprint Atlético: Trotasierra vs Unicaja",
+        tag: "Meta Hermanamiento: 1000 PTS",
+        rankTab: "tab-j1"
+      },
+      "2": {
+        id: "2",
+        file: "juego2.html",
+        title: "II. La Batalla Suprema: Keke & Trotasierra vs Unicaja",
+        tag: "6 Niveles · Hasta 18 ⭐",
+        rankTab: "tab-j2"
+      },
+      "3": {
+        id: "3",
+        file: "juego3.html",
+        title: "III. Athletics Pro: Salto de Longitud",
+        tag: "Trotasierra vs Unicaja · WR 8.95m",
+        rankTab: "tab-j3"
+      }
+    };
+
+    let activeStageGameId = null;
+
+    function getAthleteName() {
+      return (localStorage.getItem(ATHLETE_STORAGE_KEY) || "").trim();
+    }
+
+    function getSafeFirebaseKey(name) {
+      return name.toLowerCase().replace(/[^a-z0-9_-]/g, "_");
+    }
+
+    function broadcastAthleteToStage(name) {
+      if (!name || !stageGameIframe || !stageGameIframe.contentWindow) return;
+      stageGameIframe.contentWindow.postMessage({ type: "ATHLETE_NAME_UPDATED", name }, "*");
+    }
+
+    function updatePassportState() {
+      const currentName = getAthleteName();
+      if (currentName) {
+        athleteInput.value = currentName;
+        passportBadge.textContent = `✓ Atleta: ${currentName}`;
+        passportBadge.className = "passport-badge registered";
+        hudPassportName.textContent = currentName;
+        hudPassportBtn.classList.add("registered");
+        passportErrorMsg.classList.remove("visible");
+        passportCard.classList.remove("passport-alert");
+        broadcastAthleteToStage(currentName);
+      } else {
+        passportBadge.textContent = "Sin registrar";
+        passportBadge.className = "passport-badge missing";
+        hudPassportName.textContent = "Sin nombre";
+        hudPassportBtn.classList.remove("registered");
+      }
+    }
+
+    function alertMissingName() {
+      if (arenaStageView.classList.contains("active")) {
+        closeArenaStage();
+      }
+      passportErrorMsg.classList.add("visible");
+      passportCard.scrollIntoView({ behavior: "smooth", block: "center" });
+      passportCard.classList.remove("passport-alert");
+      void passportCard.offsetWidth;
+      passportCard.classList.add("passport-alert");
+      setTimeout(() => athleteInput.focus(), 320);
+    }
+
+    btnSaveAthlete.addEventListener("click", () => {
+      const val = athleteInput.value.trim();
+      if (!val) {
+        alertMissingName();
+        return;
+      }
+      localStorage.setItem(ATHLETE_STORAGE_KEY, val);
+      updatePassportState();
+      loadAllLeaderboards();
+    });
+
+    athleteInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") btnSaveAthlete.click();
+    });
+
+    // Abrir la pestaña/vista dedicada de Arena con el juego seleccionado en grande
+    function openArenaStage(gameId) {
+      const typed = athleteInput.value.trim();
+      if (!getAthleteName() && typed) {
+        localStorage.setItem(ATHLETE_STORAGE_KEY, typed);
+        updatePassportState();
+      }
+      if (!getAthleteName()) {
+        alertMissingName();
+        return;
+      }
+
+      const cfg = GAMES_CATALOG[String(gameId)] || GAMES_CATALOG["1"];
+      activeStageGameId = cfg.id;
+
+      stageGameTitle.textContent = cfg.title;
+      stageGameTag.textContent = cfg.tag;
+
+      document.querySelectorAll("[data-stage-tab]").forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.stageTab === cfg.id);
+      });
+
+      if (stageGameIframe.getAttribute("src") !== cfg.file) {
+        stageGameIframe.setAttribute("src", cfg.file);
+      }
+
+      homePortalView.classList.add("hidden-view");
+      arenaStageView.classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function closeArenaStage() {
+      activeStageGameId = null;
+      stageGameIframe.setAttribute("src", "about:blank");
+      arenaStageView.classList.remove("active");
+      homePortalView.classList.remove("hidden-view");
+      loadAllLeaderboards();
+    }
+
+    document.querySelectorAll("[data-open-game]").forEach((btn) => {
+      btn.addEventListener("click", () => openArenaStage(btn.dataset.openGame));
+    });
+
+    document.querySelectorAll("[data-stage-tab]").forEach((btn) => {
+      btn.addEventListener("click", () => openArenaStage(btn.dataset.stageTab));
+    });
+
+    document.getElementById("btnBackToHome").addEventListener("click", closeArenaStage);
+
+    stageGameIframe.addEventListener("load", () => {
+      const name = getAthleteName();
+      if (name) broadcastAthleteToStage(name);
+    });
+
+    // Pantalla completa en la Arena en grande
+    document.getElementById("btnStageFullscreen").addEventListener("click", async () => {
+      const cfg = GAMES_CATALOG[activeStageGameId || "1"];
+      try {
+        if (stageIframeShell.requestFullscreen) {
+          await stageIframeShell.requestFullscreen();
+        } else if (stageIframeShell.webkitRequestFullscreen) {
+          await stageIframeShell.webkitRequestFullscreen();
+        } else {
+          window.location.href = cfg.file;
+          return;
+        }
+        if (screen.orientation && screen.orientation.lock) {
+          screen.orientation.lock("landscape").catch(() => {});
+        }
+      } catch (_) {
+        window.location.href = cfg.file;
+      }
+    });
+
+    document.getElementById("btnExitStageFullscreen").addEventListener("click", () => {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      }
+    });
+
+    document.addEventListener("fullscreenchange", () => {
+      if (!document.fullscreenElement && screen.orientation && screen.orientation.unlock) {
+        try { screen.orientation.unlock(); } catch (_) {}
+      }
+    });
+
+    // Navegación desde la barra superior (funciona tanto desde portada como desde dentro de un juego)
+    function navigateHomeToSection(sectionId, openRankingDrawer = false) {
+      if (arenaStageView.classList.contains("active")) {
+        closeArenaStage();
+      }
+      if (openRankingDrawer) {
+        setRankingDrawerOpen(true);
+      }
+      setTimeout(() => {
+        const target = document.getElementById(sectionId);
+        if (target) {
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 40);
+    }
+
+    document.getElementById("navLogoHome").addEventListener("click", () => navigateHomeToSection("seccion-juegos"));
+    document.getElementById("navBtnGames").addEventListener("click", () => navigateHomeToSection("seccion-juegos"));
+    document.getElementById("navBtnRanking").addEventListener("click", () => navigateHomeToSection("seccion-ranking", true));
+    document.getElementById("navBtnStory").addEventListener("click", () => navigateHomeToSection("seccion-historia"));
+    hudPassportBtn.addEventListener("click", () => {
+      navigateHomeToSection("seccion-juegos");
+      setTimeout(() => athleteInput.focus(), 350);
+    });
+
+    // Desplegable y Pestañas del Salón de la Fama
+    const rankingDrawerBody = document.getElementById("rankingDrawerBody");
+    const rankingDrawerChevron = document.getElementById("rankingDrawerChevron");
+    const btnToggleRankingDrawer = document.getElementById("btnToggleRankingDrawer");
+
+    function setRankingDrawerOpen(isOpen) {
+      rankingDrawerBody.classList.toggle("collapsed", !isOpen);
+      btnToggleRankingDrawer.setAttribute("aria-expanded", String(isOpen));
+      rankingDrawerChevron.textContent = isOpen ? "▲ Ocultar" : "▼ Desplegar";
+    }
+
+    btnToggleRankingDrawer.addEventListener("click", () => {
+      const currentlyOpen = !rankingDrawerBody.classList.contains("collapsed");
+      setRankingDrawerOpen(!currentlyOpen);
+    });
+
+    function activateRankingTab(tabId) {
+      document.querySelectorAll("[data-rank-tab]").forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.rankTab === tabId);
+      });
+      document.querySelectorAll(".ranking-tab-panel").forEach((panel) => {
+        panel.classList.toggle("active", panel.id === tabId);
+      });
+    }
+
+    document.querySelectorAll("[data-rank-tab]").forEach((btn) => {
+      btn.addEventListener("click", () => activateRankingTab(btn.dataset.rankTab));
+    });
+
+    window.addEventListener("storage", (e) => {
+      if (e.key === ATHLETE_STORAGE_KEY) {
+        updatePassportState();
+        loadAllLeaderboards();
+      }
+    });
+
+    updatePassportState();
+
+    // =========================================================================
+    // 1. CONEXIÓN CON FIREBASE REALTIME DATABASE (ALTAR DE HYPE)
+    // =========================================================================
+    const FIREBASE_DB_URL = "https://keke-3706f-default-rtdb.europe-west1.firebasedatabase.app";
+    const HYPE_ENDPOINT = `${FIREBASE_DB_URL}/alianza_hype.json`;
+
+    const hypeCounterEl = document.getElementById("hypeCounter");
+    const syncInfoEl = document.getElementById("syncInfo");
+    const btnHype = document.getElementById("btnHypeAlliance");
+
+    let displayedVotes = parseInt(localStorage.getItem("keke_local_backup_votes") || "0", 10);
+    let pendingClicks = 0;
+    let flushTimer = null;
+
+    function renderCounter(val, animate = false) {
+      hypeCounterEl.textContent = Number(val || 0).toLocaleString("es-ES");
+      if (animate) {
+        hypeCounterEl.classList.remove("bump");
+        void hypeCounterEl.offsetWidth;
+        hypeCounterEl.classList.add("bump");
+      }
+    }
+
+    async function fetchGlobalHype() {
+      if (pendingClicks > 0) return;
+      try {
+        const res = await fetch(HYPE_ENDPOINT);
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const data = await res.json();
+        const serverTotal = data && typeof data.total === "number" ? data.total : 0;
+        if (serverTotal >= displayedVotes || displayedVotes === 0) {
+          displayedVotes = serverTotal;
+          localStorage.setItem("keke_local_backup_votes", String(displayedVotes));
+          renderCounter(displayedVotes, false);
+        }
+        syncInfoEl.textContent = "🟢 Conectado en directo con el Reino · Pulsa sin límite para acumular fuegos";
+      } catch (err) {
+        renderCounter(displayedVotes, false);
+        syncInfoEl.textContent = "Pulsa tantas veces como quieras para acumular fuegos por la alianza";
+      }
+    }
+
+    async function flushVotesToFirebase() {
+      if (pendingClicks <= 0) return;
+      const batch = pendingClicks;
+      pendingClicks = 0;
+
+      try {
+        const res = await fetch(HYPE_ENDPOINT, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            total: { ".sv": { increment: batch } },
+            ultima_llama: Date.now()
+          })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data && typeof data.total === "number") {
+            displayedVotes = Math.max(displayedVotes, data.total);
+            localStorage.setItem("keke_local_backup_votes", String(displayedVotes));
+            renderCounter(displayedVotes, false);
+          }
+        }
+      } catch (_) {}
+    }
+
+    function spawnFloatingPlus(x, y) {
+      const el = document.createElement("span");
+      el.className = "floating-vote";
+      const isGreen = Math.random() > 0.5;
+      el.textContent = isGreen ? "+1 💚" : "+1 🔥";
+      el.style.color = isGreen ? "#34d399" : "#ffd166";
+      el.style.left = (x + (Math.random() - 0.5) * 40) + "px";
+      el.style.top = (y - 16) + "px";
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 950);
+    }
+
+    btnHype.addEventListener("click", (e) => {
+      displayedVotes += 1;
+      pendingClicks += 1;
+      localStorage.setItem("keke_local_backup_votes", String(displayedVotes));
+      renderCounter(displayedVotes, true);
+
+      const rect = btnHype.getBoundingClientRect();
+      const cx = e.clientX || rect.left + rect.width / 2;
+      const cy = e.clientY || rect.top;
+      spawnFloatingPlus(cx, cy);
+
+      clearTimeout(flushTimer);
+      flushTimer = setTimeout(flushVotesToFirebase, 320);
+    });
+
+    fetchGlobalHype();
+    setInterval(fetchGlobalHype, 4000);
+
+    // =========================================================================
+    // 2. GUARDADO Y LECTURA EN TIEMPO REAL DE LOS 3 RANKINGS EN FIREBASE
+    // =========================================================================
+    let lastUploadedGame1Score = 0;
+    let game1SyncInFlight = false;
+
+    function escapeHTML(str) {
+      return String(str).replace(/[&<>"']/g, (m) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      }[m]));
+    }
+
+    function flashStatusBadges(text) {
+      [document.getElementById("rankingLiveStatus"), document.getElementById("stageLiveFeedback")].forEach((badgeEl) => {
+        if (!badgeEl) return;
+        badgeEl.textContent = text;
+        badgeEl.classList.add("live-flash");
+        clearTimeout(badgeEl._flashTimer);
+        badgeEl._flashTimer = setTimeout(() => badgeEl.classList.remove("live-flash"), 1800);
+      });
+    }
+
+    async function saveGame1ScoreToFirebase(newScore, playerNameOverride = null, forceRefresh = false) {
+      const name = (playerNameOverride || getAthleteName()).trim();
+      const cleanScore = Math.round(Number(newScore || 0));
+      if (!name || cleanScore <= 0) return;
+
+      if (!forceRefresh && cleanScore <= lastUploadedGame1Score) return;
+      if (game1SyncInFlight && !forceRefresh) return;
+
+      game1SyncInFlight = true;
+      lastUploadedGame1Score = Math.max(lastUploadedGame1Score, cleanScore);
+
+      const safeKey = getSafeFirebaseKey(name);
+      const endpoint = `${FIREBASE_DB_URL}/rankings/juego1/${safeKey}.json`;
+
+      try {
+        const res = await fetch(endpoint);
+        const existing = await res.json();
+        const prevBest = existing && typeof existing.puntos === "number" ? existing.puntos : 0;
+        const bestScore = Math.max(prevBest, cleanScore);
+        lastUploadedGame1Score = bestScore;
+
+        if (bestScore > prevBest || forceRefresh) {
+          await fetch(endpoint, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              nombre: name,
+              puntos: bestScore,
+              fecha: Date.now()
+            })
+          });
+          await loadGame1Leaderboard();
+        }
+      } catch (_) {
+      } finally {
+        game1SyncInFlight = false;
+      }
+    }
+
+    async function saveGame2ProgressToFirebase(nivel, estrellas, playerNameOverride = null) {
+      const name = (playerNameOverride || getAthleteName()).trim();
+      const cleanLevel = Math.max(1, Math.min(6, Math.round(Number(nivel || 1))));
+      const cleanStars = Math.max(0, Math.min(18, Math.round(Number(estrellas || 0))));
+      if (!name) return;
+
+      const safeKey = getSafeFirebaseKey(name);
+      const endpoint = `${FIREBASE_DB_URL}/rankings/juego2/${safeKey}.json`;
+
+      try {
+        const res = await fetch(endpoint);
+        const existing = await res.json();
+        const prevStars = existing && typeof existing.estrellas === "number" ? existing.estrellas : 0;
+        const prevLevel = existing && typeof existing.nivel === "number" ? existing.nivel : 1;
+
+        const bestStars = Math.max(prevStars, cleanStars);
+        const bestLevel = Math.max(prevLevel, cleanLevel);
+
+        await fetch(endpoint, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            nombre: name,
+            nivel: bestLevel,
+            estrellas: bestStars,
+            fecha: Date.now()
+          })
+        });
+        await loadGame2Leaderboard();
+      } catch (_) {
+        await loadGame2Leaderboard();
+      }
+    }
+
+    async function saveGame3LongJumpToFirebase(summary, playerNameOverride = null) {
+      const name = (playerNameOverride || (summary && summary.name) || getAthleteName()).trim();
+      if (!name || !summary) return;
+
+      // Priorizamos la mejor marca con viento legal (<= +2.0 m/s), y si no hubo legal, guardamos la absoluta con aviso de viento
+      const legalDist = Number(summary.bestLegalDistance || 0);
+      const rawDist = Number(summary.bestDistance || 0);
+      const bestDist = legalDist > 0 ? legalDist : rawDist;
+      if (bestDist <= 0) return;
+
+      let bestWind = 0;
+      if (Array.isArray(summary.attempts)) {
+        const matched = summary.attempts.find(
+          (a) => a.valid && Math.abs(Number(a.distance) - bestDist) < 0.015
+        );
+        if (matched && typeof matched.wind === "number") {
+          bestWind = matched.wind;
+        }
+      }
+
+      const club = String(summary.club || "Trotasierra Hornachuelos");
+      const safeKey = getSafeFirebaseKey(name);
+      const endpoint = `${FIREBASE_DB_URL}/rankings/juego3/${safeKey}.json`;
+
+      try {
+        const res = await fetch(endpoint);
+        const existing = await res.json();
+        const prevDist = existing && typeof existing.distancia === "number" ? existing.distancia : 0;
+
+        if (bestDist >= prevDist) {
+          await fetch(endpoint, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              nombre: name,
+              club: club,
+              distancia: Number(bestDist.toFixed(2)),
+              viento: Number(bestWind.toFixed(1)),
+              legal: legalDist > 0,
+              fecha: Date.now()
+            })
+          });
+          await loadGame3Leaderboard();
+        }
+      } catch (_) {
+        await loadGame3Leaderboard();
+      }
+    }
+
+    window.addEventListener("message", (event) => {
+      const data = event.data;
+      if (!data || typeof data !== "object") return;
+
+      if (data.type === "ATHLETE_REGISTERED" && data.name) {
+        const incomingName = String(data.name).trim();
+        if (incomingName && incomingName !== getAthleteName()) {
+          localStorage.setItem(ATHLETE_STORAGE_KEY, incomingName);
+          updatePassportState();
+          loadAllLeaderboards();
+        }
+        return;
+      }
+
+      if (data.type === "SPRINT_LIVE_RECORD") {
+        const pts = Math.round(Number(data.score || 0));
+        flashStatusBadges(`🔥 Sprint: ${pts.toLocaleString("es-ES")} PTS`);
+        saveGame1ScoreToFirebase(pts, data.name, false);
+        return;
+      }
+
+      if (data.type === "SPRINT_GAME_OVER") {
+        const pts = Math.round(Number(data.score || 0));
+        flashStatusBadges(`🏁 Sprint Final: ${pts.toLocaleString("es-ES")} PTS`);
+        saveGame1ScoreToFirebase(pts, data.name, true);
+        return;
+      }
+
+      if (data.type === "BATALLA_PROGRESS_UPDATE") {
+        const nivel = Number(data.nivel || 1);
+        const estrellas = Number(data.estrellas || 0);
+        flashStatusBadges(`⭐ Batalla: Nivel 0${nivel} · ${estrellas}/18 ⭐`);
+        saveGame2ProgressToFirebase(nivel, estrellas, data.name);
+        return;
+      }
+
+      if (data.type === "LONGJUMP_FINISH" && data.summary) {
+        const mark = Number(data.summary.bestLegalDistance || data.summary.bestDistance || 0).toFixed(2);
+        flashStatusBadges(`🏅 Longitud: ${mark} m`);
+        saveGame3LongJumpToFirebase(data.summary, data.name);
+      }
+    });
+
+    async function loadGame1Leaderboard() {
+      const tbody = document.getElementById("leaderboard-juego1-body");
+      const currentName = getAthleteName().toLowerCase();
+      try {
+        const res = await fetch(`${FIREBASE_DB_URL}/rankings/juego1.json`);
+        const data = await res.json();
+        if (!data || typeof data !== "object") {
+          tbody.innerHTML = `<tr class="leaderboard-placeholder-row"><td colspan="4">Aún no hay marcas registradas. ¡Sé el primero en correr!</td></tr>`;
+          return;
+        }
+        const rows = Object.values(data)
+          .filter((item) => item && item.nombre && typeof item.puntos === "number")
+          .sort((a, b) => b.puntos - a.puntos)
+          .slice(0, 10);
+
+        if (rows.length === 0) {
+          tbody.innerHTML = `<tr class="leaderboard-placeholder-row"><td colspan="4">Aún no hay marcas registradas. ¡Sé el primero en correr!</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = rows
+          .map((item, idx) => {
+            const medal = idx === 0 ? "🥇 1º" : idx === 1 ? "🥈 2º" : idx === 2 ? "🥉 3º" : `#${idx + 1}`;
+            const isMe = currentName && item.nombre.toLowerCase() === currentName;
+            if (isMe) {
+              lastUploadedGame1Score = Math.max(lastUploadedGame1Score, item.puntos);
+            }
+            const status = item.puntos >= 1000 ? "🤝 Hermanamiento Logrado" : "🏃 En Competición";
+            return `
+              <tr class="${isMe ? "is-current-player" : ""}">
+                <td>${medal}</td>
+                <td>${escapeHTML(item.nombre)}</td>
+                <td>${item.puntos.toLocaleString("es-ES")} PTS</td>
+                <td>${status}</td>
+              </tr>
+            `;
+          })
+          .join("");
+      } catch (_) {
+        tbody.innerHTML = `<tr class="leaderboard-placeholder-row"><td colspan="4">No se pudo conectar con el Salón de la Fama.</td></tr>`;
+      }
+    }
+
+    async function loadGame2Leaderboard() {
+      const tbody = document.getElementById("leaderboard-juego2-body");
+      const currentName = getAthleteName().toLowerCase();
+      try {
+        const res = await fetch(`${FIREBASE_DB_URL}/rankings/juego2.json`);
+        const data = await res.json();
+        if (!data || typeof data !== "object") {
+          tbody.innerHTML = `<tr class="leaderboard-placeholder-row"><td colspan="4">Aún no hay estrategas registrados. ¡Conquista Las Erillas!</td></tr>`;
+          return;
+        }
+        const rows = Object.values(data)
+          .filter((item) => item && item.nombre && typeof item.estrellas === "number")
+          .sort((a, b) => {
+            if (b.estrellas !== a.estrellas) return b.estrellas - a.estrellas;
+            return (b.nivel || 1) - (a.nivel || 1);
+          })
+          .slice(0, 10);
+
+        if (rows.length === 0) {
+          tbody.innerHTML = `<tr class="leaderboard-placeholder-row"><td colspan="4">Aún no hay estrategas registrados. ¡Conquista Las Erillas!</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = rows
+          .map((item, idx) => {
+            const medal = idx === 0 ? "🥇 1º" : idx === 1 ? "🥈 2º" : idx === 2 ? "🥉 3º" : `#${idx + 1}`;
+            const isMe = currentName && item.nombre.toLowerCase() === currentName;
+            const lvlLabel = item.nivel === 6 ? "Nivel 06 (Alianza Final)" : `Nivel 0${item.nivel || 1}`;
+            return `
+              <tr class="${isMe ? "is-current-player" : ""}">
+                <td>${medal}</td>
+                <td>${escapeHTML(item.nombre)}</td>
+                <td>${lvlLabel}</td>
+                <td>${item.estrellas} / 18 ⭐</td>
+              </tr>
+            `;
+          })
+          .join("");
+      } catch (_) {
+        tbody.innerHTML = `<tr class="leaderboard-placeholder-row"><td colspan="4">No se pudo conectar con el Salón de la Fama.</td></tr>`;
+      }
+    }
+
+    async function loadGame3Leaderboard() {
+      const tbody = document.getElementById("leaderboard-juego3-body");
+      const currentName = getAthleteName().toLowerCase();
+      try {
+        const res = await fetch(`${FIREBASE_DB_URL}/rankings/juego3.json`);
+        const data = await res.json();
+        if (!data || typeof data !== "object") {
+          tbody.innerHTML = `<tr class="leaderboard-placeholder-row"><td colspan="5">Aún no hay saltos registrados. ¡Salta al foso de Las Erillas!</td></tr>`;
+          return;
+        }
+        const rows = Object.values(data)
+          .filter((item) => item && item.nombre && typeof item.distancia === "number")
+          .sort((a, b) => b.distancia - a.distancia)
+          .slice(0, 10);
+
+        if (rows.length === 0) {
+          tbody.innerHTML = `<tr class="leaderboard-placeholder-row"><td colspan="5">Aún no hay saltos registrados. ¡Salta al foso de Las Erillas!</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = rows
+          .map((item, idx) => {
+            const medal = idx === 0 ? "🥇 1º" : idx === 1 ? "🥈 2º" : idx === 2 ? "🥉 3º" : `#${idx + 1}`;
+            const isMe = currentName && item.nombre.toLowerCase() === currentName;
+            const windVal = typeof item.viento === "number" ? item.viento : 0;
+            const windStr = `${windVal >= 0 ? "+" : ""}${windVal.toFixed(1)} m/s`;
+            const wrCrown = item.distancia > 8.95 ? " 👑 WR" : "";
+            return `
+              <tr class="${isMe ? "is-current-player" : ""}">
+                <td>${medal}</td>
+                <td>${escapeHTML(item.nombre)}</td>
+                <td>${escapeHTML(item.club || "Trotasierra")}</td>
+                <td><strong>${item.distancia.toFixed(2)} m</strong>${wrCrown}</td>
+                <td>${windStr}</td>
+              </tr>
+            `;
+          })
+          .join("");
+      } catch (_) {
+        tbody.innerHTML = `<tr class="leaderboard-placeholder-row"><td colspan="5">No se pudo conectar con el Salón de la Fama.</td></tr>`;
+      }
+    }
+
+    function loadAllLeaderboards() {
+      loadGame1Leaderboard();
+      loadGame2Leaderboard();
+      loadGame3Leaderboard();
+    }
+
+    loadAllLeaderboards();
+    setInterval(loadAllLeaderboards, 3500);
+
+    // =========================================================================
+    // 3. SÍMBOLOS SVG Y CÓDICE INTERACTIVO
+    // =========================================================================
+    const EMBLEM_ICONS = {
+      keke: `<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l3-9 6 5 6-5 3 9H3z"/><path d="M4 20h16"/><circle cx="12" cy="5" r="1.5" fill="currentColor"/></svg>`,
+      unicaja: `<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l8 4v6c0 5.2-3.4 9.7-8 11-4.6-1.3-8-5.8-8-11V6l8-4z"/><path d="M12 7v10M8 11l4-4 4 4"/></svg>`,
+      club: `<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2c2.5 3.5 5 6.2 5 10a5 5 0 01-10 0c0-2.1 1.1-4.2 2.5-6 .3 1.7 1.4 2.7 2.5 2.7 0-2.5-.5-4.7 0-6.7z"/><path d="M8 21h8"/></svg>`,
+      atletas: `<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2L4 14h7l-1 8 10-12h-7l0-8z"/></svg>`,
+      alianza: `<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="12" r="5"/><circle cx="15" cy="12" r="5"/></svg>`,
+      reino: `<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9 12 2"/><circle cx="12" cy="12" r="2.2" fill="currentColor"/></svg>`
+    };
+
+    const LORE_DB = {
+      keke: {
+        rank: "Dios Legendario · Soberano del Trotasierra",
+        title: "Miguel Aguilera Gómez «Keke»",
+        theme: "gold",
+        hasPortrait: true,
+        body: "Cuando el abismo amenazaba con devorar el proyecto y los atletas estaban al borde de la partida, Keke emergió con la autoridad de una deidad en su reino. Con temple inquebrantable y visión maestra, transformó una guerra perdida en una alianza histórica que aseguró la supremacía del club.",
+        stats: [
+          { label: "Título Supremo", val: "Señor de Las Erillas" },
+          { label: "Poder en el Reino", val: "Absoluto / Legendario" },
+          { label: "Hazaña", val: "Salvación y Pacto Magno" },
+          { label: "Elemento", val: "Fuego Dorado y Voluntad" }
+        ],
+        quote: "«Allí donde otros veían una batalla perdida, Keke vio el nacimiento de una era inmortal.»"
+      },
+      unicaja: {
+        rank: "Coloso Esmeralda · De Rival a Hermano de Armas",
+        title: "El Poderoso Unicaja",
+        theme: "unicaja",
+        body: "Durante largo tiempo, la imponente sombra de Unicaja se proyectó sobre el horizonte como el gran adversario capaz de comprometer la estabilidad del proyecto. Sin embargo, ante la grandeza estratégica de Keke, el titán esmeralda depuso las armas para caminar juntos bajo un mismo estandarte.",
+        stats: [
+          { label: "Emblema", val: "Fuerza Esmeralda" },
+          { label: "Estatus Actual", val: "Gran Aliado del Reino" },
+          { label: "Naturaleza", val: "Potencia Histórica" },
+          { label: "Juramento", val: "Prosperar Juntos" }
+        ],
+        quote: "«Cuando dos gigantes unen sus estandartes, ninguna tormenta puede detener su avance.»"
+      },
+      club: {
+        rank: "Bastión de Hornachuelos · Fortaleza Atlética",
+        title: "El Club Trotasierra",
+        theme: "gold",
+        body: "Forjado con décadas de sudor, gloria y hermandad en las pistas de Las Erillas. Estuvo al borde del colapso por la inminente fuga de sus guerreros, hasta que la intervención divina de Keke reescribió su destino con letras de fuego y oro.",
+        stats: [
+          { label: "Santuario", val: "Las Erillas" },
+          { label: "Colores", val: "Azul, Blanco y Fuego" },
+          { label: "Estado", val: "Invicto y Renacido" },
+          { label: "Protector", val: "Keke" }
+        ],
+        quote: "«Un club no muere mientras exista un líder dispuesto a dar un paso al frente por él.»"
+      },
+      atletas: {
+        rank: "La Guardia Dorada · El Alma de la Pista",
+        title: "Los Atletas del Reino",
+        theme: "gold",
+        body: "Los corredores y competidores que constituyen el corazón vivo del equipo. Su inminente marcha estuvo al borde de sumir el proyecto en las tinieblas, pero el pacto sellado por Keke les devolvió un hogar invencible donde conquistar nuevas cimas.",
+        stats: [
+          { label: "Rol", val: "Campeones del Tartán" },
+          { label: "Destino", val: "Protegidos por la Alianza" },
+          { label: "Fuerza", val: "Unidad Inquebrantable" },
+          { label: "Horizonte", val: "Gloria Compartida" }
+        ],
+        quote: "«Proteger a sus atletas fue la chispa que encendió la mayor gesta de Keke.»"
+      },
+      alianza: {
+        rank: "El Pacto del Siglo · Fuego y Esmeralda",
+        title: "Un Mismo Estandarte",
+        theme: "unicaja",
+        body: "La obra maestra de Miguel Aguilera Gómez: convertir la rivalidad más temida en una hermandad imparable. Al fundir el espíritu del Trotasierra con el poder de Unicaja, Keke demostró que la verdadera supremacía nace de unir fuerzas.",
+        stats: [
+          { label: "Artífice", val: "Keke, el Trotasierra" },
+          { label: "Fuerzas Unidas", val: "Trotasierra + Unicaja" },
+          { label: "Propósito", val: "Vencer y Prosperar" },
+          { label: "Legado", val: "Eterno en el Reino" }
+        ],
+        quote: "«No todas las batallas se ganan con la espada; las más grandes se ganan forjando aliados.»"
+      },
+      reino: {
+        rank: "Dominio de Las Erillas · Tierra de Leyendas",
+        title: "El Reino Atlético",
+        theme: "gold",
+        body: "El vasto territorio competitivo donde se miden los más grandes clubes y atletas. Gracias a la visión de Keke, todo el reino fue testigo de cómo un destino que parecía sellado se transformó en el inicio de una hegemonía legendaria.",
+        stats: [
+          { label: "Capital Mística", val: "Pistas de Las Erillas" },
+          { label: "Soberano", val: "Keke" },
+          { label: "Era", val: "La Nueva Edad Dorada" },
+          { label: "Símbolo", val: "La Llama Eterna" }
+        ],
+        quote: "«Las leyendas se forjan construyendo alianzas capaces de cambiar el destino de todo un reino.»"
+      }
+    };
+
+    const backdrop = document.getElementById("codexBackdrop");
+    const modal = document.getElementById("codexModal");
+    const kekePortraitBox = document.getElementById("kekePortraitBox");
+    const modalEmblem = document.getElementById("modalEmblem");
+    const modalRank = document.getElementById("modalRank");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalBody = document.getElementById("modalBody");
+    const modalStats = document.getElementById("modalStats");
+    const modalQuote = document.getElementById("modalQuote");
+
+    function openLore(key) {
+      const item = LORE_DB[key];
+      if (!item) return;
+
+      modal.classList.toggle("unicaja-modal", item.theme === "unicaja");
+
+      if (item.hasPortrait) {
+        kekePortraitBox.classList.add("visible");
+        modalEmblem.style.display = "none";
+      } else {
+        kekePortraitBox.classList.remove("visible");
+        modalEmblem.style.display = "flex";
+        modalEmblem.innerHTML = EMBLEM_ICONS[key] || EMBLEM_ICONS.keke;
+      }
+
+      modalRank.textContent = item.rank;
+      modalTitle.textContent = item.title;
+      modalBody.textContent = item.body;
+      modalQuote.textContent = item.quote;
+
+      modalStats.innerHTML = item.stats
+        .map(
+          (s) => `
+          <div class="stat-pill">
+            <div class="stat-label">${s.label}</div>
+            <div class="stat-val">${s.val}</div>
+          </div>`
+        )
+        .join("");
+
+      backdrop.classList.add("active");
+    }
+
+    document.querySelectorAll("[data-lore]").forEach((el) => {
+      el.addEventListener("click", () => openLore(el.dataset.lore));
+    });
+
+    document.getElementById("codexClose").addEventListener("click", () => backdrop.classList.remove("active"));
+    backdrop.addEventListener("click", (e) => {
+      if (e.target === backdrop) backdrop.classList.remove("active");
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") backdrop.classList.remove("active");
+    });
+
+    // =========================================================================
+    // 4. CONTROLES DE LECTURA Y ECO SONORO
+    // =========================================================================
+    let fontSize = 1.32;
+    const storyBody = document.getElementById("storyBody");
+    document.getElementById("btnFontPlus").addEventListener("click", () => {
+      fontSize = Math.min(1.85, fontSize + 0.1);
+      storyBody.style.fontSize = fontSize + "rem";
+    });
+    document.getElementById("btnFontMinus").addEventListener("click", () => {
+      fontSize = Math.max(1.05, fontSize - 0.1);
+      storyBody.style.fontSize = fontSize + "rem";
+    });
+
+    window.addEventListener("scroll", () => {
+      const h = document.documentElement;
+      const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+      document.getElementById("readingProgress").style.width = (pct || 0) + "%";
+    });
+
+    let audioCtx = null;
+    let audioOn = false;
+    document.getElementById("btnAudio").addEventListener("click", function () {
+      if (!audioOn) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.value = 73.42;
+        gain.gain.value = 0.035;
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        audioOn = true;
+        this.textContent = "🔇 Silenciar Eco";
+      } else if (audioCtx) {
+        audioCtx.close();
+        audioOn = false;
+        this.textContent = "🔊 Eco Místico";
+      }
+    });
+  </script>
+</body>
+</html>

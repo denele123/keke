@@ -1,0 +1,2704 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Sprint Atlético - Trotasierra vs Unicaja</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,600;0,700;1,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at top, #0f172a 0%, #090d16 100%);
+            color: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .font-sport {
+            font-family: 'Chakra Petch', sans-serif;
+        }
+
+        /* Contenedor principal del juego */
+        #game-wrapper {
+            position: relative;
+            width: 96vw;
+            max-width: 1000px;
+            aspect-ratio: 16 / 8.5;
+            min-height: 260px;
+            max-height: 550px;
+            border-radius: 1.35rem;
+            overflow: hidden;
+            box-shadow: 0 28px 60px -15px rgba(0, 0, 0, 0.78), 0 0 0 2px rgba(255, 255, 255, 0.14);
+            background: #0284c7;
+            transform: translateZ(0);
+        }
+
+        canvas#gameCanvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Botones deportivos estilizados */
+        .btn-sport {
+            transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.18s ease;
+            box-shadow: 0 4px 0 rgba(0, 0, 0, 0.32);
+        }
+        .btn-sport:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.07);
+        }
+        .btn-sport:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.32);
+        }
+
+        /* Tarjetas de selección de corredor */
+        .runner-card {
+            transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.22s ease, background 0.22s ease;
+        }
+        .runner-card.selected {
+            border-color: #38bdf8;
+            background: linear-gradient(145deg, rgba(14, 165, 233, 0.28), rgba(37, 99, 235, 0.22));
+            box-shadow: 0 0 24px rgba(56, 189, 248, 0.35), inset 0 0 0 1px rgba(125, 211, 252, 0.4);
+            transform: translateY(-2px);
+        }
+        .runner-card:not(.selected):hover {
+            border-color: rgba(148, 163, 184, 0.5);
+            background: rgba(30, 41, 59, 0.85);
+        }
+
+        @keyframes floatPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        .animate-float-pulse {
+            animation: floatPulse 2.2s infinite ease-in-out;
+        }
+
+        @keyframes rotatePhoneHint {
+            0%, 15% { transform: rotate(0deg); }
+            45%, 75% { transform: rotate(-90deg); }
+            90%, 100% { transform: rotate(0deg); }
+        }
+        .animate-phone-rotate {
+            animation: rotatePhoneHint 2.6s infinite ease-in-out;
+        }
+
+        input.athlete-inline-input {
+            user-select: text;
+            -webkit-user-select: text;
+        }
+
+        /* Pantalla de aviso cuando el móvil o tablet está en vertical */
+        #rotate-device-overlay {
+            display: none;
+        }
+
+        @media (orientation: portrait) and (max-width: 900px) {
+            #rotate-device-overlay {
+                display: flex;
+            }
+        }
+
+        /* Optimización total para móviles en horizontal (poca altura) */
+        @media (orientation: landscape) and (max-height: 520px) {
+            body {
+                padding: 4px !important;
+            }
+            #game-header {
+                display: none !important;
+            }
+            #game-footer {
+                display: none !important;
+            }
+            #game-wrapper {
+                width: 98vw;
+                height: 94vh;
+                max-height: 94vh;
+                aspect-ratio: auto;
+                border-radius: 0.85rem;
+            }
+            #start-screen {
+                padding: 6px !important;
+                overflow-y: auto;
+            }
+            #start-card {
+                padding: 10px 14px !important;
+                max-width: 640px !important;
+            }
+            #start-badge, #start-desc, #controls-legend {
+                display: none !important;
+            }
+            #start-title {
+                font-size: 1.05rem !important;
+                margin-bottom: 6px !important;
+            }
+            #runner-grid {
+                gap: 8px !important;
+                margin-bottom: 8px !important;
+            }
+            #runner-grid canvas {
+                width: 44px !important;
+                height: 44px !important;
+            }
+            .runner-card {
+                padding: 6px !important;
+                flex-direction: row !important;
+                justify-content: center !important;
+                gap: 8px !important;
+            }
+            #btn-start {
+                padding-top: 8px !important;
+                padding-bottom: 8px !important;
+                font-size: 0.92rem !important;
+            }
+            #landscape-touch-controls {
+                display: flex !important;
+            }
+        }
+    </style>
+</head>
+<body class="p-2 sm:p-4">
+
+    <!-- ESCUDO DE ORIENTACIÓN VERTICAL EN MÓVILES / TABLETS -->
+    <div id="rotate-device-overlay" class="fixed inset-0 z-50 bg-slate-950/96 flex-col items-center justify-center p-6 text-center">
+        <div class="w-16 h-24 rounded-2xl border-2 border-sky-400 bg-slate-900 flex items-center justify-center mb-5 shadow-[0_0_30px_rgba(56,189,248,0.45)] animate-phone-rotate">
+            <span class="text-3xl">📱</span>
+        </div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/20 border border-sky-400/40 text-sky-300 text-xs font-sport font-bold uppercase tracking-wider mb-2">
+            Pista Panorámica · Las Erillas
+        </div>
+        <h2 class="font-sport text-2xl font-bold text-white uppercase tracking-wide mb-2">
+            Gira tu dispositivo a Horizontal
+        </h2>
+        <p class="text-slate-300 text-sm max-w-xs mb-5 leading-relaxed">
+            Para ver los obstáculos de pista y pulsar los controles cómodamente, coloca tu móvil o tablet en <strong class="text-emerald-300">modo horizontal</strong>.
+        </p>
+        <button type="button" id="btn-force-landscape"
+            class="btn-sport px-5 py-3 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-500 text-white font-sport font-bold text-sm uppercase tracking-wider cursor-pointer">
+            ⛶ Activar Pantalla Completa Horizontal
+        </button>
+    </div>
+
+    <!-- Cabecera superior con identidad de clubes, atleta activo y sonido -->
+    <header id="game-header" class="w-full max-w-[1000px] flex items-center justify-between mb-2 sm:mb-3 px-1">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-sky-500 via-blue-600 to-emerald-500 flex items-center justify-center shadow-lg border border-white/25 relative overflow-hidden">
+                <span class="font-sport font-extrabold text-white text-sm tracking-tighter">T<span class="text-emerald-200">v</span>U</span>
+            </div>
+            <div>
+                <div class="flex items-center gap-2">
+                    <h1 class="font-sport text-lg sm:text-2xl font-bold tracking-wider uppercase bg-clip-text text-transparent bg-gradient-to-r from-sky-300 via-white to-emerald-300 leading-none">
+                        Sprint Atlético
+                    </h1>
+                    <span class="hidden md:inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-sky-500/20 text-sky-300 border border-sky-400/30">
+                        Trotasierra
+                    </span>
+                    <span class="hidden md:inline text-xs text-slate-500 font-bold">VS</span>
+                    <span class="hidden md:inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
+                        Unicaja
+                    </span>
+                </div>
+                <p class="text-[11px] sm:text-xs text-slate-400 font-medium mt-0.5">Gran Encuentro de Pista • Meta Especial: 1000 PTS</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <div id="header-athlete-pill" class="hidden sm:flex items-center gap-1.5 bg-amber-500/15 border border-amber-400/40 text-amber-200 px-3 py-1.5 rounded-xl text-xs font-sport font-bold">
+                <span>🪪</span>
+                <span id="header-athlete-name">Atleta</span>
+            </div>
+            <button id="btn-sound" title="Activar / Silenciar sonido"
+                class="btn-sport bg-slate-800/90 hover:bg-slate-700 text-slate-100 border border-slate-600/70 px-3 py-2 rounded-xl flex items-center gap-1.5 text-xs sm:text-sm font-semibold cursor-pointer">
+                <span id="sound-icon">🔊</span>
+                <span class="hidden sm:inline" id="sound-label">Sonido</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Lienzo Principal del Juego -->
+    <main id="game-wrapper">
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- HUD Superior dentro del Canvas (optimizado sin backdrop-blur costoso en móvil) -->
+        <div id="hud-overlay" class="absolute top-2.5 left-3 right-3 flex justify-between items-start pointer-events-none z-10">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-1.5">
+                <div class="bg-blue-950/90 border border-sky-400/35 rounded-xl px-2.5 py-1 shadow-md flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-sky-400"></span>
+                    <span class="font-sport font-bold text-[11px] sm:text-sm text-sky-200 tracking-wider uppercase">C.A. TROTASIERRA</span>
+                </div>
+                <div id="milestone-badge" class="bg-slate-900/90 border border-emerald-400/30 rounded-xl px-2.5 py-1 text-[11px] sm:text-sm shadow-md flex items-center gap-1.5">
+                    <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                    <span id="milestone-text" class="font-sport font-semibold text-emerald-200 tracking-wide">META UNICAJA: 1000 PTS</span>
+                </div>
+            </div>
+
+            <div class="bg-slate-900/90 border border-white/15 rounded-xl px-3 py-1 shadow-lg flex items-center gap-3 font-sport">
+                <div class="text-right">
+                    <span class="text-[9px] sm:text-xs text-slate-400 block leading-none">RÉCORD</span>
+                    <span id="hud-hi" class="text-xs sm:text-lg font-bold text-amber-300 tracking-widest">00000</span>
+                </div>
+                <div class="h-5 w-[1px] bg-slate-700"></div>
+                <div class="text-right">
+                    <span class="text-[9px] sm:text-xs text-sky-300 block leading-none">PUNTOS</span>
+                    <span id="hud-score" class="text-sm sm:text-xl font-bold text-white tracking-widest">00000</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTONES TÁCTILES SUPERPUESTOS EN MODO HORIZONTAL MÓVIL/TABLET -->
+        <div id="landscape-touch-controls" class="hidden absolute bottom-2.5 left-3 right-3 justify-between items-end pointer-events-none z-15">
+            <button type="button" id="touch-duck-hud"
+                class="pointer-events-auto bg-emerald-600/85 active:bg-emerald-500 border border-emerald-300/60 text-white px-4 py-2.5 rounded-xl font-sport font-bold text-xs tracking-wider uppercase shadow-lg">
+                ▼ AGACHARSE
+            </button>
+            <button type="button" id="touch-jump-hud"
+                class="pointer-events-auto bg-blue-600/85 active:bg-blue-500 border border-sky-300/60 text-white px-5 py-2.5 rounded-xl font-sport font-bold text-xs tracking-wider uppercase shadow-lg">
+                ▲ SALTAR
+            </button>
+        </div>
+
+        <!-- PANTALLA DE INICIO CON SELECTOR INTERACTIVO DE ATLETA TROTASIERRA -->
+        <div id="start-screen" class="absolute inset-0 bg-slate-950/75 flex flex-col items-center justify-center p-2.5 sm:p-4 text-center z-20">
+            <div id="start-card" class="max-w-lg w-full bg-slate-900/95 border border-white/15 rounded-2xl p-3.5 sm:p-5 shadow-2xl">
+                <div id="start-badge" class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-sky-500/20 to-emerald-500/20 border border-sky-400/30 text-sky-200 text-[11px] font-bold uppercase tracking-wider mb-1.5">
+                    <span>🏃‍♂️ Club Trotasierra</span>
+                    <span class="text-slate-400">•</span>
+                    <span class="text-emerald-300">Encuentro Unicaja</span>
+                </div>
+
+                <h2 id="start-title" class="font-sport text-lg sm:text-2xl font-bold text-white mb-1 tracking-tight">
+                    ELIGE TU ATLETA TROTASIERRA
+                </h2>
+                <p id="start-desc" class="text-slate-300 text-xs sm:text-sm mb-3 leading-snug">
+                    Esquiva a los velocistas del <strong class="text-emerald-400">Unicaja</strong> y los lanzamientos de pista. ¡Llega a <strong class="text-sky-300">1000 puntos</strong> para hermanar ambos clubes!
+                </p>
+
+                <!-- Bloque de Pasaporte de Atleta -->
+                <div id="inline-passport-box" class="hidden mb-2.5 p-2 rounded-xl bg-amber-500/15 border border-amber-400/50 text-left">
+                    <label for="inline-athlete-input" class="block font-sport text-[10px] font-bold uppercase tracking-wider text-amber-300 mb-1">
+                        🪪 Pasaporte de Atleta (Obligatorio):
+                    </label>
+                    <div class="flex gap-2">
+                        <input
+                            type="text"
+                            id="inline-athlete-input"
+                            maxlength="20"
+                            placeholder="Tu nombre o apodo..."
+                            class="athlete-inline-input flex-1 px-2.5 py-1 rounded-lg bg-slate-950/90 border border-amber-400/50 text-white text-xs font-bold focus:outline-none focus:border-amber-300"
+                        />
+                        <button type="button" id="btn-save-inline-athlete"
+                            class="btn-sport px-3 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-sport font-bold text-xs uppercase cursor-pointer">
+                            Guardar
+                        </button>
+                    </div>
+                    <p id="inline-passport-error" class="hidden text-[11px] text-rose-400 font-bold mt-1">
+                        ⚠️ Escribe tu nombre antes de empezar la carrera.
+                    </p>
+                </div>
+
+                <!-- Selector Interactivo Chico / Chica con Mini-Canvas animado -->
+                <div id="runner-grid" class="grid grid-cols-2 gap-3 mb-3">
+                    <button type="button" id="select-boy" class="runner-card selected rounded-2xl border-2 border-slate-700 bg-slate-800/70 p-2 flex flex-col items-center cursor-pointer relative">
+                        <span class="hidden sm:inline absolute top-2 right-2 text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-sky-500/30 text-sky-200 border border-sky-400/30">Azul #01</span>
+                        <canvas id="previewBoyCanvas" width="96" height="96" class="w-14 h-14 sm:w-20 sm:h-20"></canvas>
+                        <div class="text-center">
+                            <span class="font-sport font-bold text-xs sm:text-base text-white block">ATLETA CHICO</span>
+                            <span class="text-[10px] sm:text-[11px] text-sky-300 block">Trotasierra</span>
+                        </div>
+                    </button>
+
+                    <button type="button" id="select-girl" class="runner-card rounded-2xl border-2 border-slate-700 bg-slate-800/70 p-2 flex flex-col items-center cursor-pointer relative">
+                        <span class="hidden sm:inline absolute top-2 right-2 text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-sky-500/30 text-sky-200 border border-sky-400/30">Azul #02</span>
+                        <canvas id="previewGirlCanvas" width="96" height="96" class="w-14 h-14 sm:w-20 sm:h-20"></canvas>
+                        <div class="text-center">
+                            <span class="font-sport font-bold text-xs sm:text-base text-white block">ATLETA CHICA</span>
+                            <span class="text-[10px] sm:text-[11px] text-sky-300 block">Trotasierra</span>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Controles compactos -->
+                <div id="controls-legend" class="grid grid-cols-2 gap-2 mb-3 text-left text-[11px] sm:text-xs">
+                    <div class="bg-slate-800/80 border border-slate-700/80 rounded-xl px-2.5 py-1.5 flex items-center gap-2">
+                        <span class="px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300 font-bold border border-sky-500/30">▲ / TOCAR</span>
+                        <span class="text-slate-200">Saltar</span>
+                    </div>
+                    <div class="bg-slate-800/80 border border-slate-700/80 rounded-xl px-2.5 py-1.5 flex items-center gap-2">
+                        <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">▼ / BOTÓN</span>
+                        <span class="text-slate-200">Agacharse</span>
+                    </div>
+                </div>
+
+                <button type="button" id="btn-start"
+                    class="btn-sport w-full py-2.5 sm:py-3 px-6 rounded-xl bg-gradient-to-r from-blue-600 via-sky-500 to-blue-600 text-white font-sport font-bold text-sm sm:text-lg tracking-wider uppercase cursor-pointer animate-float-pulse">
+                    ▶ IR A TACOS DE SALIDA
+                </button>
+            </div>
+        </div>
+
+        <!-- MODAL POST-ANIMACIÓN 1000 PUNTOS (Elegir Seguir o Salir) -->
+        <div id="unicaja-choice-modal" class="hidden absolute inset-0 bg-slate-950/80 flex items-center justify-center p-3 z-30">
+            <div class="max-w-md w-full bg-gradient-to-b from-slate-900 to-slate-950 border-2 border-emerald-400/70 rounded-2xl p-4 sm:p-6 text-center shadow-[0_0_45px_rgba(16,185,129,0.45)]">
+                <div class="w-11 h-11 sm:w-14 sm:h-14 mx-auto mb-2 rounded-2xl bg-gradient-to-br from-sky-500 to-emerald-500 flex items-center justify-center text-2xl sm:text-3xl shadow-lg border border-white/25">
+                    🤝
+                </div>
+                <h2 class="font-sport text-lg sm:text-2xl font-bold text-emerald-300 uppercase tracking-wide mb-1">
+                    ¡TROTASIERRA Y UNICAJA HERMANADOS!
+                </h2>
+                <p class="text-slate-300 text-xs sm:text-sm mb-4 leading-relaxed">
+                    Has alcanzado los <strong class="text-white">1000 puntos</strong> en la pista. ¡Te has afiliado con el <strong class="text-emerald-300">Unicaja</strong>! ¿Qué quieres hacer ahora?
+                </p>
+                <div class="flex flex-row gap-3">
+                    <button type="button" id="btn-continue-endless"
+                        class="btn-sport flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-600 to-green-500 text-white font-sport font-bold text-xs sm:text-base uppercase tracking-wider cursor-pointer">
+                        🏃 Seguir
+                    </button>
+                    <button type="button" id="btn-exit-summary"
+                        class="btn-sport flex-1 py-2.5 px-3 rounded-xl bg-slate-700 hover:bg-slate-600 border border-slate-500 text-white font-sport font-bold text-xs sm:text-base uppercase tracking-wider cursor-pointer">
+                        🏁 Salir
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANTALLA DE GAME OVER / RESUMEN FINAL -->
+        <div id="gameover-screen" class="hidden absolute inset-0 bg-slate-950/82 flex items-center justify-center p-3 z-30">
+            <div class="max-w-md w-full bg-slate-900/95 border border-white/15 rounded-2xl p-4 sm:p-6 text-center shadow-2xl">
+                <div id="gameover-badge" class="inline-block px-3 py-0.5 rounded-full bg-rose-500/20 border border-rose-400/30 text-rose-300 text-[11px] font-bold uppercase tracking-wider mb-1">
+                    ¡Fin de la carrera!
+                </div>
+                <h2 id="gameover-title" class="font-sport text-xl sm:text-3xl font-bold text-white mb-1">
+                    CARRERA TERMINADA
+                </h2>
+                <p id="gameover-athlete-sync" class="text-[11px] sm:text-xs text-amber-300 font-sport mb-3">
+                    Marca registrada en el Salón de la Fama
+                </p>
+
+                <div class="grid grid-cols-2 gap-2.5 mb-3.5">
+                    <div class="bg-slate-800/90 border border-slate-700 rounded-xl p-2.5">
+                        <span class="text-[10px] text-slate-400 block uppercase">Puntuación Final</span>
+                        <span id="final-score" class="font-sport text-xl sm:text-3xl font-bold text-sky-400">0</span>
+                    </div>
+                    <div class="bg-slate-800/90 border border-slate-700 rounded-xl p-2.5">
+                        <span class="text-[10px] text-slate-400 block uppercase">Mejor Récord</span>
+                        <span id="final-hi" class="font-sport text-xl sm:text-3xl font-bold text-amber-300">0</span>
+                    </div>
+                </div>
+
+                <div id="affiliated-status-box" class="hidden mb-3 px-3 py-1.5 rounded-xl bg-emerald-500/15 border border-emerald-400/30 text-emerald-300 text-xs font-semibold">
+                    ⭐ ¡Logro desbloqueado: Afiliado oficial Trotasierra - Unicaja!
+                </div>
+
+                <div class="flex flex-row gap-2.5">
+                    <button type="button" id="btn-change-runner"
+                        class="btn-sport py-2.5 px-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-200 font-sport font-bold text-xs sm:text-sm tracking-wider uppercase cursor-pointer">
+                        👤 Cambiar
+                    </button>
+                    <button type="button" id="btn-restart"
+                        class="btn-sport flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-emerald-500 text-white font-sport font-bold text-sm sm:text-base tracking-wider uppercase cursor-pointer">
+                        ↻ VOLVER A CORRER
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Pie de instrucciones discretas en escritorio -->
+    <footer id="game-footer" class="hidden sm:flex items-center justify-between w-full max-w-[1000px] mt-2.5 px-1 text-xs text-slate-400">
+        <div>
+            Controles: <strong class="text-slate-200">Espacio / Flecha Arriba / Clic</strong> para saltar • <strong class="text-slate-200">Flecha Abajo (mantener)</strong> para agacharse.
+        </div>
+        <div>
+            Club Azul: <strong class="text-sky-400">Trotasierra</strong> • Club Verde: <strong class="text-emerald-400">Unicaja</strong>
+        </div>
+    </footer>
+
+    <script>
+        /**
+         * SPRINT ATLÉTICO - EDICIÓN TROTASIERRA VS UNICAJA
+         * Versión optimizada para fluidez máxima (60 FPS estables) en móviles y tablets.
+         */
+        (function () {
+            // ==========================================
+            // 0. SINCRONIZACIÓN DE ATLETA Y FIREBASE RANKING
+            // ==========================================
+            const ATHLETE_STORAGE_KEY = 'keke_athlete_name';
+            const FIREBASE_DB_URL = 'https://keke-3706f-default-rtdb.europe-west1.firebasedatabase.app';
+
+            const headerAthletePill = document.getElementById('header-athlete-pill');
+            const headerAthleteName = document.getElementById('header-athlete-name');
+            const inlinePassportBox = document.getElementById('inline-passport-box');
+            const inlineAthleteInput = document.getElementById('inline-athlete-input');
+            const btnSaveInlineAthlete = document.getElementById('btn-save-inline-athlete');
+            const inlinePassportError = document.getElementById('inline-passport-error');
+            const gameoverAthleteSync = document.getElementById('gameover-athlete-sync');
+
+            let lastBroadcastedLiveRecord = 0;
+            let directFirebaseSyncInFlight = false;
+
+            function getAthleteName() {
+                return (localStorage.getItem(ATHLETE_STORAGE_KEY) || '').trim();
+            }
+
+            function getSafeFirebaseKey(name) {
+                return name.toLowerCase().replace(/[^a-z0-9_-]/g, '_');
+            }
+
+            function syncAthleteUI() {
+                const name = getAthleteName();
+                if (name) {
+                    headerAthleteName.textContent = name;
+                    headerAthletePill.classList.remove('hidden');
+                    headerAthletePill.classList.add('flex');
+                    inlinePassportBox.classList.add('hidden');
+                    inlinePassportError.classList.add('hidden');
+                    loadAthletePersonalBestFromFirebase(name);
+                } else {
+                    headerAthletePill.classList.add('hidden');
+                    headerAthletePill.classList.remove('flex');
+                    inlinePassportBox.classList.remove('hidden');
+                }
+            }
+
+            function registerAthleteFromGame(rawName) {
+                const clean = String(rawName || '').trim();
+                if (!clean) {
+                    inlinePassportError.classList.remove('hidden');
+                    inlineAthleteInput.focus();
+                    return false;
+                }
+                localStorage.setItem(ATHLETE_STORAGE_KEY, clean);
+                syncAthleteUI();
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({ type: 'ATHLETE_REGISTERED', name: clean }, '*');
+                }
+                return true;
+            }
+
+            async function loadAthletePersonalBestFromFirebase(name) {
+                if (!name) return;
+                try {
+                    const safeKey = getSafeFirebaseKey(name);
+                    const res = await fetch(`${FIREBASE_DB_URL}/rankings/juego1/${safeKey}.json`);
+                    if (!res.ok) return;
+                    const data = await res.json();
+                    if (data && typeof data.puntos === 'number' && data.puntos > highScore) {
+                        highScore = data.puntos;
+                        localStorage.setItem('trotasierra_unicaja_hi', String(highScore));
+                        lastBroadcastedLiveRecord = highScore;
+                        updateHUD();
+                    }
+                } catch (_) {}
+            }
+
+            async function pushScoreDirectToFirebase(name, cleanScore) {
+                if (!name || cleanScore <= 0 || directFirebaseSyncInFlight) return;
+                directFirebaseSyncInFlight = true;
+                const safeKey = getSafeFirebaseKey(name);
+                const endpoint = `${FIREBASE_DB_URL}/rankings/juego1/${safeKey}.json`;
+                try {
+                    const res = await fetch(endpoint);
+                    const existing = await res.json();
+                    const prevBest = existing && typeof existing.puntos === 'number' ? existing.puntos : 0;
+                    const bestScore = Math.max(prevBest, cleanScore);
+                    if (bestScore > prevBest) {
+                        await fetch(endpoint, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                nombre: name,
+                                puntos: bestScore,
+                                fecha: Date.now()
+                            })
+                        });
+                    }
+                } catch (_) {
+                } finally {
+                    directFirebaseSyncInFlight = false;
+                }
+            }
+
+            function reportLiveRecord(intScore) {
+                const name = getAthleteName();
+                if (!name || intScore <= 0 || intScore <= lastBroadcastedLiveRecord) return;
+                lastBroadcastedLiveRecord = intScore;
+
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'SPRINT_LIVE_RECORD',
+                        name,
+                        score: intScore
+                    }, '*');
+                } else {
+                    pushScoreDirectToFirebase(name, intScore);
+                }
+            }
+
+            function reportFinalGameOver(intScore) {
+                const name = getAthleteName();
+                if (!name) return;
+
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'SPRINT_GAME_OVER',
+                        name,
+                        score: intScore
+                    }, '*');
+                } else if (intScore > 0) {
+                    pushScoreDirectToFirebase(name, intScore);
+                }
+            }
+
+            window.addEventListener('message', (event) => {
+                const data = event.data;
+                if (!data || typeof data !== 'object') return;
+                if (data.type === 'ATHLETE_NAME_UPDATED' && data.name) {
+                    const incoming = String(data.name).trim();
+                    if (incoming) {
+                        localStorage.setItem(ATHLETE_STORAGE_KEY, incoming);
+                        syncAthleteUI();
+                    }
+                }
+            });
+
+            window.addEventListener('storage', (e) => {
+                if (e.key === ATHLETE_STORAGE_KEY) {
+                    syncAthleteUI();
+                }
+            });
+
+            btnSaveInlineAthlete.addEventListener('click', () => {
+                registerAthleteFromGame(inlineAthleteInput.value);
+            });
+
+            inlineAthleteInput.addEventListener('keydown', (e) => {
+                e.stopPropagation();
+                if (e.key === 'Enter') {
+                    registerAthleteFromGame(inlineAthleteInput.value);
+                }
+            });
+
+            document.getElementById('btn-force-landscape')?.addEventListener('click', async () => {
+                try {
+                    const el = document.documentElement;
+                    if (el.requestFullscreen) await el.requestFullscreen();
+                    else if (el.webkitRequestFullscreen) await el.webkitRequestFullscreen();
+                    if (screen.orientation && screen.orientation.lock) {
+                        await screen.orientation.lock('landscape');
+                    }
+                } catch (_) {}
+            });
+
+            // ==========================================
+            // 1. REFERENCIAS AL DOM Y CONFIGURACIÓN CANVAS
+            // ==========================================
+            const canvas = document.getElementById('gameCanvas');
+            // alpha: false acelera enormemente la composición GPU en móviles
+            const ctx = canvas.getContext('2d', { alpha: false });
+
+            const previewBoyCanvas = document.getElementById('previewBoyCanvas');
+            const previewBoyCtx = previewBoyCanvas.getContext('2d');
+            const previewGirlCanvas = document.getElementById('previewGirlCanvas');
+            const previewGirlCtx = previewGirlCanvas.getContext('2d');
+
+            const startScreen = document.getElementById('start-screen');
+            const gameoverScreen = document.getElementById('gameover-screen');
+            const unicajaChoiceModal = document.getElementById('unicaja-choice-modal');
+            const hudScore = document.getElementById('hud-score');
+            const hudHi = document.getElementById('hud-hi');
+            const milestoneText = document.getElementById('milestone-text');
+            const finalScoreEl = document.getElementById('final-score');
+            const finalHiEl = document.getElementById('final-hi');
+            const gameoverBadge = document.getElementById('gameover-badge');
+            const gameoverTitle = document.getElementById('gameover-title');
+            const affiliatedStatusBox = document.getElementById('affiliated-status-box');
+
+            const selectBoyBtn = document.getElementById('select-boy');
+            const selectGirlBtn = document.getElementById('select-girl');
+            const btnStart = document.getElementById('btn-start');
+            const btnRestart = document.getElementById('btn-restart');
+            const btnChangeRunner = document.getElementById('btn-change-runner');
+            const btnContinueEndless = document.getElementById('btn-continue-endless');
+            const btnExitSummary = document.getElementById('btn-exit-summary');
+            const btnSound = document.getElementById('btn-sound');
+            const soundIcon = document.getElementById('sound-icon');
+            const soundLabel = document.getElementById('sound-label');
+            const touchJumpHud = document.getElementById('touch-jump-hud');
+            const touchDuckHud = document.getElementById('touch-duck-hud');
+
+            const LOGICAL_WIDTH = 960;
+            const LOGICAL_HEIGHT = 510;
+            canvas.width = LOGICAL_WIDTH;
+            canvas.height = LOGICAL_HEIGHT;
+
+            // ==========================================
+            // 2. SISTEMA DE SONIDO SINTETIZADO (WEB AUDIO API)
+            // ==========================================
+            class SoundFX {
+                constructor() {
+                    this.ctx = null;
+                    this.muted = false;
+                }
+
+                init() {
+                    if (!this.ctx) {
+                        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                        if (AudioCtx) this.ctx = new AudioCtx();
+                    }
+                    if (this.ctx && this.ctx.state === 'suspended') {
+                        this.ctx.resume();
+                    }
+                }
+
+                toggleMute() {
+                    this.muted = !this.muted;
+                    soundIcon.textContent = this.muted ? '🔇' : '🔊';
+                    if (soundLabel) soundLabel.textContent = this.muted ? 'Silenciado' : 'Sonido';
+                }
+
+                playCountdownBeep(step) {
+                    if (this.muted) return;
+                    this.init();
+                    if (!this.ctx) return;
+
+                    const now = this.ctx.currentTime;
+                    if (step > 0) {
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(step === 1 ? 587.33 : 440, now);
+                        gain.gain.setValueAtTime(0.15, now);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+                        osc.connect(gain);
+                        gain.connect(this.ctx.destination);
+                        osc.start(now);
+                        osc.stop(now + 0.19);
+                    } else {
+                        const bufferSize = this.ctx.sampleRate * 0.25;
+                        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+                        const data = buffer.getChannelData(0);
+                        for (let i = 0; i < bufferSize; i++) {
+                            data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (this.ctx.sampleRate * 0.05));
+                        }
+                        const noise = this.ctx.createBufferSource();
+                        noise.buffer = buffer;
+
+                        const filter = this.ctx.createBiquadFilter();
+                        filter.type = 'bandpass';
+                        filter.frequency.value = 1100;
+
+                        const gain = this.ctx.createGain();
+                        gain.gain.setValueAtTime(0.32, now);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.24);
+
+                        noise.connect(filter);
+                        filter.connect(gain);
+                        gain.connect(this.ctx.destination);
+                        noise.start(now);
+
+                        const osc = this.ctx.createOscillator();
+                        const oscGain = this.ctx.createGain();
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(880, now);
+                        oscGain.gain.setValueAtTime(0.16, now);
+                        oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+                        osc.connect(oscGain);
+                        oscGain.connect(this.ctx.destination);
+                        osc.start(now);
+                        osc.stop(now + 0.29);
+                    }
+                }
+
+                playJump() {
+                    if (this.muted) return;
+                    this.init();
+                    if (!this.ctx) return;
+                    const now = this.ctx.currentTime;
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(250, now);
+                    osc.frequency.exponentialRampToValueAtTime(580, now + 0.14);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.15);
+                }
+
+                playDuck() {
+                    if (this.muted) return;
+                    this.init();
+                    if (!this.ctx) return;
+                    const now = this.ctx.currentTime;
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(220, now);
+                    osc.frequency.exponentialRampToValueAtTime(115, now + 0.08);
+                    gain.gain.setValueAtTime(0.08, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.09);
+                }
+
+                playMilestone100() {
+                    if (this.muted) return;
+                    this.init();
+                    if (!this.ctx) return;
+                    const now = this.ctx.currentTime;
+                    [523.25, 659.25].forEach((freq, idx) => {
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+                        osc.type = 'square';
+                        osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+                        gain.gain.setValueAtTime(0.06, now + idx * 0.08);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.14);
+                        osc.connect(gain);
+                        gain.connect(this.ctx.destination);
+                        osc.start(now + idx * 0.08);
+                        osc.stop(now + idx * 0.08 + 0.15);
+                    });
+                }
+
+                playUnicajaFanfare() {
+                    if (this.muted) return;
+                    this.init();
+                    if (!this.ctx) return;
+                    const now = this.ctx.currentTime;
+                    const melody = [
+                        { f: 523.25, t: 0.00, d: 0.14 },
+                        { f: 659.25, t: 0.14, d: 0.14 },
+                        { f: 783.99, t: 0.28, d: 0.14 },
+                        { f: 1046.50, t: 0.44, d: 0.28 },
+                        { f: 783.99, t: 0.76, d: 0.14 },
+                        { f: 1046.50, t: 0.92, d: 0.55 }
+                    ];
+                    melody.forEach(note => {
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(note.f, now + note.t);
+                        gain.gain.setValueAtTime(0.18, now + note.t);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + note.t + note.d);
+                        osc.connect(gain);
+                        gain.connect(this.ctx.destination);
+                        osc.start(now + note.t);
+                        osc.stop(now + note.t + note.d + 0.02);
+                    });
+                }
+
+                playCrash() {
+                    if (this.muted) return;
+                    this.init();
+                    if (!this.ctx) return;
+                    const now = this.ctx.currentTime;
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(170, now);
+                    osc.frequency.exponentialRampToValueAtTime(42, now + 0.35);
+                    gain.gain.setValueAtTime(0.22, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.36);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.37);
+                }
+            }
+
+            const sound = new SoundFX();
+
+            // ==========================================
+            // 3. CONSTANTES Y ESTADO GLOBAL DEL JUEGO
+            // ==========================================
+            const GROUND_Y = 418;
+            const GRAVITY = 2350;
+            const JUMP_VELOCITY = -820;
+            const FAST_FALL_GRAVITY = 4800;
+            const BASE_SCORE_RATE = 3.82;
+
+            const GAME_STATES = {
+                START: 'START',
+                COUNTDOWN: 'COUNTDOWN',
+                PLAYING: 'PLAYING',
+                CELEBRATING: 'CELEBRATING',
+                CHOICE: 'CHOICE',
+                GAMEOVER: 'GAMEOVER'
+            };
+
+            let state = GAME_STATES.START;
+            let selectedGender = 'boy';
+            let score = 0;
+            let lastDisplayedScore = -1;
+            let lastDisplayedHi = -1;
+            let lastDisplayedMilestone = '';
+            let highScore = parseInt(localStorage.getItem('trotasierra_unicaja_hi') || '0', 10);
+            let lastHundredMilestone = 0;
+            let hasTriggered1000Event = false;
+            let endlessModeActive = false;
+
+            let countdownTimer = 3.0;
+            let lastCountdownInt = 4;
+            let goBannerTimer = 0;
+
+            let baseSpeed = 430;
+            let currentSpeed = baseSpeed;
+            let distanceTraveled = 0;
+            let lastTimestamp = 0;
+
+            let obstacles = [];
+            let spawnTimer = 1.2;
+            let clouds = [];
+            let birds = [];
+            let stadiumFlags = [];
+            let dustParticles = [];
+
+            const airplane = {
+                active: true,
+                x: 820,
+                y: 78,
+                speed: 62,
+                bannerIndex: 0,
+                messages: ['¡VAMOS TROTASIERRA!', '¡VAMOS UNICAJA!', '¡GRAN DUELO EN PISTA!'],
+                cooldown: 0,
+                propellerAngle: 0
+            };
+
+            let celebrationTimer = 0;
+            const CELEBRATION_DURATION = 4.6;
+            let greenFans = [];
+            let confettiParticles = [];
+
+            // ==========================================
+            // 3B. OFFSCREEN CANVAS CACHES (CERO RE-DIBUJO ESTÁTICO)
+            // ==========================================
+            const staticBgCanvas = document.createElement('canvas');
+            staticBgCanvas.width = LOGICAL_WIDTH;
+            staticBgCanvas.height = LOGICAL_HEIGHT;
+            const staticBgCtx = staticBgCanvas.getContext('2d', { alpha: false });
+
+            const adBannerCache = document.createElement('canvas');
+            adBannerCache.width = 440;
+            adBannerCache.height = 28;
+            const adBannerCtx = adBannerCache.getContext('2d');
+
+            const cloudSpriteCache = document.createElement('canvas');
+            cloudSpriteCache.width = 130;
+            cloudSpriteCache.height = 65;
+            const cloudSpriteCtx = cloudSpriteCache.getContext('2d');
+
+            function buildStaticCaches() {
+                // 1. Sprite de Nube pre-renderizado
+                cloudSpriteCtx.clearRect(0, 0, 130, 65);
+                cloudSpriteCtx.fillStyle = 'rgba(186, 230, 253, 0.75)';
+                cloudSpriteCtx.beginPath();
+                cloudSpriteCtx.arc(34, 38, 20, 0, Math.PI * 2);
+                cloudSpriteCtx.arc(56, 34, 25, 0, Math.PI * 2);
+                cloudSpriteCtx.arc(82, 38, 19, 0, Math.PI * 2);
+                cloudSpriteCtx.fill();
+
+                cloudSpriteCtx.fillStyle = 'rgba(255, 255, 255, 0.94)';
+                cloudSpriteCtx.beginPath();
+                cloudSpriteCtx.arc(30, 33, 20, 0, Math.PI * 2);
+                cloudSpriteCtx.arc(53, 26, 26, 0, Math.PI * 2);
+                cloudSpriteCtx.arc(79, 33, 19, 0, Math.PI * 2);
+                cloudSpriteCtx.arc(54, 41, 18, 0, Math.PI * 2);
+                cloudSpriteCtx.fill();
+
+                // 2. Patrón continuo de vallas publicitarias (Unicaja + Trotasierra)
+                adBannerCtx.fillStyle = '#090d16';
+                adBannerCtx.fillRect(0, 0, 440, 28);
+
+                const uGrad = adBannerCtx.createLinearGradient(0, 0, 0, 26);
+                uGrad.addColorStop(0, '#16a34a');
+                uGrad.addColorStop(1, '#14532d');
+                adBannerCtx.fillStyle = uGrad;
+                adBannerCtx.fillRect(2, 3, 216, 22);
+
+                const tGrad = adBannerCtx.createLinearGradient(0, 0, 0, 26);
+                tGrad.addColorStop(0, '#0284c7');
+                tGrad.addColorStop(1, '#1e3a8a');
+                adBannerCtx.fillStyle = tGrad;
+                adBannerCtx.fillRect(222, 3, 216, 22);
+
+                adBannerCtx.fillStyle = '#ffffff';
+                adBannerCtx.font = 'bold 11.5px "Chakra Petch", sans-serif';
+                adBannerCtx.textAlign = 'center';
+                adBannerCtx.fillText('★ C.A. UNICAJA ATLETISMO ★', 110, 18);
+                adBannerCtx.fillText('★ CLUB ATLETISMO TROTASIERRA ★', 330, 18);
+
+                // 3. Fondo completo estático (Cielo, Sol, Árboles, Focos, Gradas, Tartán, Carriles)
+                const c = staticBgCtx;
+                const skyGrad = c.createLinearGradient(0, 0, 0, 265);
+                skyGrad.addColorStop(0, '#0369a1');
+                skyGrad.addColorStop(0.45, '#0ea5e9');
+                skyGrad.addColorStop(0.85, '#7dd3fc');
+                skyGrad.addColorStop(1, '#e0f2fe');
+                c.fillStyle = skyGrad;
+                c.fillRect(0, 0, LOGICAL_WIDTH, 265);
+
+                const sunGrad = c.createRadialGradient(85, 58, 6, 85, 58, 72);
+                sunGrad.addColorStop(0, 'rgba(254, 249, 195, 0.95)');
+                sunGrad.addColorStop(0.35, 'rgba(253, 224, 71, 0.45)');
+                sunGrad.addColorStop(1, 'rgba(253, 224, 71, 0)');
+                c.fillStyle = sunGrad;
+                c.beginPath();
+                c.arc(85, 58, 72, 0, Math.PI * 2);
+                c.fill();
+
+                c.fillStyle = '#065f46';
+                for (let tx = -20; tx < LOGICAL_WIDTH + 40; tx += 52) {
+                    const treeH = 26 + ((tx * 13) % 16);
+                    c.beginPath();
+                    c.arc(tx, 172, treeH, Math.PI, 0);
+                    c.fill();
+                }
+
+                [175, 785].forEach(towerX => {
+                    c.fillStyle = '#334155';
+                    c.fillRect(towerX - 3, 95, 6, 75);
+                    c.fillStyle = '#1e293b';
+                    c.beginPath();
+                    c.roundRect(towerX - 18, 82, 36, 16, 4);
+                    c.fill();
+                    c.fillStyle = '#fef08a';
+                    for (let fx = -12; fx <= 12; fx += 8) {
+                        c.beginPath();
+                        c.arc(towerX + fx, 90, 2.3, 0, Math.PI * 2);
+                        c.fill();
+                    }
+                });
+
+                // Marcador central estático (los números dinámicos van encima)
+                c.save();
+                c.translate(LOGICAL_WIDTH / 2, 128);
+                c.fillStyle = '#1e293b';
+                c.fillRect(-55, 22, 8, 25);
+                c.fillRect(47, 22, 8, 25);
+                c.fillStyle = '#0f172a';
+                c.strokeStyle = '#475569';
+                c.lineWidth = 2.5;
+                c.beginPath();
+                c.roundRect(-84, -22, 168, 46, 8);
+                c.fill();
+                c.stroke();
+
+                c.font = 'bold 10px "Chakra Petch", sans-serif';
+                c.textAlign = 'center';
+                c.fillStyle = '#38bdf8';
+                c.fillText('TROTASIERRA', -40, -6);
+                c.fillStyle = '#94a3b8';
+                c.fillText('VS', 0, -6);
+                c.fillStyle = '#4ade80';
+                c.fillText('UNICAJA', 42, -6);
+                c.restore();
+
+                const standsTop = 166;
+                const standsBottom = 315;
+                const roofGrad = c.createLinearGradient(0, standsTop - 18, 0, standsTop + 8);
+                roofGrad.addColorStop(0, '#0f172a');
+                roofGrad.addColorStop(1, '#334155');
+                c.fillStyle = roofGrad;
+                c.fillRect(0, standsTop - 16, LOGICAL_WIDTH, 22);
+
+                const gradStands = c.createLinearGradient(0, standsTop, 0, standsBottom);
+                gradStands.addColorStop(0, '#334155');
+                gradStands.addColorStop(1, '#0f172a');
+                c.fillStyle = gradStands;
+                c.fillRect(0, standsTop + 6, LOGICAL_WIDTH, standsBottom - standsTop);
+
+                for (let row = 0; row < 5; row++) {
+                    const ry = standsTop + 23 + row * 22;
+                    c.fillStyle = 'rgba(2, 6, 23, 0.55)';
+                    c.fillRect(0, ry + 7, LOGICAL_WIDTH, 4);
+                }
+
+                const grassGrad = c.createLinearGradient(0, 334, 0, 350);
+                grassGrad.addColorStop(0, '#15803d');
+                grassGrad.addColorStop(1, '#14532d');
+                c.fillStyle = grassGrad;
+                c.fillRect(0, 334, LOGICAL_WIDTH, 16);
+
+                const trackTop = 350;
+                const trackGrad = c.createLinearGradient(0, trackTop, 0, LOGICAL_HEIGHT);
+                trackGrad.addColorStop(0, '#ea580c');
+                trackGrad.addColorStop(0.35, '#dc2626');
+                trackGrad.addColorStop(0.8, '#b91c1c');
+                trackGrad.addColorStop(1, '#7f1d1d');
+                c.fillStyle = trackGrad;
+                c.fillRect(0, trackTop, LOGICAL_WIDTH, LOGICAL_HEIGHT - trackTop);
+
+                const laneYs = [352, 388, 427, 469];
+                laneYs.forEach((ly, index) => {
+                    c.fillStyle = 'rgba(127, 29, 29, 0.45)';
+                    c.fillRect(0, ly + 3, LOGICAL_WIDTH, 2);
+                    c.fillStyle = index === 0 ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.8)';
+                    c.fillRect(0, ly, LOGICAL_WIDTH, index === 0 ? 4 : 3);
+                });
+            }
+
+            // ==========================================
+            // 4. PERFILES DIVERSOS DE ATLETAS RIVAL (UNICAJA)
+            // ==========================================
+            const SKIN_TONES = [
+                { base: '#f7d3ba', shadow: '#dfb091', highlight: '#ffe8d6' },
+                { base: '#eab896', shadow: '#cc936e', highlight: '#f8d2b6' },
+                { base: '#d2946b', shadow: '#b07249', highlight: '#e5ad87' },
+                { base: '#a66a46', shadow: '#824d2e', highlight: '#bd815c' },
+                { base: '#6b422c', shadow: '#4d2c1b', highlight: '#85563d' },
+                { base: '#4a2c1d', shadow: '#301a10', highlight: '#633e2b' }
+            ];
+
+            const HAIR_STYLES_BOY = [
+                { style: 'short', color: '#1e293b' },
+                { style: 'fade', color: '#0f172a' },
+                { style: 'curly', color: '#271a12' },
+                { style: 'short', color: '#78350f' },
+                { style: 'short', color: '#d97706' }
+            ];
+
+            const HAIR_STYLES_GIRL = [
+                { style: 'ponytail', color: '#facc15', highlight: '#fef08a' },
+                { style: 'ponytail', color: '#eab308', highlight: '#fde047' },
+                { style: 'braid', color: '#1e293b', highlight: '#475569' },
+                { style: 'ponytail', color: '#5c2d16', highlight: '#854d27' },
+                { style: 'ponytail', color: '#9a3412', highlight: '#c2410c' },
+                { style: 'bun', color: '#0f172a', highlight: '#334155' }
+            ];
+
+            function generateRandomUnicajaRival(indexOffset = 0) {
+                const gender = Math.random() < 0.52 ? 'girl' : 'boy';
+                const skin = SKIN_TONES[Math.floor(Math.random() * SKIN_TONES.length)];
+                const hairPool = gender === 'girl' ? HAIR_STYLES_GIRL : HAIR_STYLES_BOY;
+                const hair = hairPool[Math.floor(Math.random() * hairPool.length)];
+
+                const bodyTypes = [
+                    { label: 'tall', scaleX: 0.96, scaleY: 1.11, muscle: 0.95 },
+                    { label: 'strong', scaleX: 1.14, scaleY: 1.03, muscle: 1.25 },
+                    { label: 'lean', scaleX: 0.88, scaleY: 0.95, muscle: 0.85 },
+                    { label: 'athletic', scaleX: 1.02, scaleY: 1.02, muscle: 1.05 }
+                ];
+                const body = bodyTypes[Math.floor(Math.random() * bodyTypes.length)];
+
+                const kitVariant = Math.floor(Math.random() * 3);
+                const bibNumber = 100 + Math.floor(Math.random() * 899);
+
+                return {
+                    gender,
+                    skin,
+                    hair,
+                    body,
+                    kitVariant,
+                    bibNumber,
+                    phase: indexOffset * 0.95 + Math.random() * 1.5
+                };
+            }
+
+            // ==========================================
+            // 5. OBJETO JUGADOR (PROTAGONISTA TROTASIERRA)
+            // ==========================================
+            const player = {
+                x: 120,
+                y: GROUND_Y,
+                vy: 0,
+                width: 44,
+                height: 76,
+                duckHeight: 44,
+                isGrounded: true,
+                isDucking: false,
+                runCycle: 0,
+                stepDustTimer: 0,
+
+                reset() {
+                    this.x = 120;
+                    this.y = GROUND_Y;
+                    this.vy = 0;
+                    this.isGrounded = true;
+                    this.isDucking = false;
+                    this.runCycle = 0;
+                    this.stepDustTimer = 0;
+                },
+
+                jump() {
+                    if (this.isGrounded) {
+                        this.vy = JUMP_VELOCITY;
+                        this.isGrounded = false;
+                        this.isDucking = false;
+                        spawnDustBurst(this.x, GROUND_Y, 7, '#ea580c');
+                        sound.playJump();
+                    }
+                },
+
+                setDuck(ducking) {
+                    if (ducking && !this.isDucking && this.isGrounded) {
+                        sound.playDuck();
+                    }
+                    this.isDucking = ducking;
+                },
+
+                update(dt, speedMultiplier) {
+                    const wasAirborne = !this.isGrounded;
+                    if (!this.isGrounded) {
+                        const grav = this.isDucking ? FAST_FALL_GRAVITY : GRAVITY;
+                        this.vy += grav * dt;
+                        this.y += this.vy * dt;
+
+                        if (this.y >= GROUND_Y) {
+                            this.y = GROUND_Y;
+                            this.vy = 0;
+                            this.isGrounded = true;
+                            if (wasAirborne) {
+                                spawnDustBurst(this.x, GROUND_Y, 5, '#f97316');
+                            }
+                        }
+                    }
+
+                    if (this.isGrounded) {
+                        this.runCycle += dt * 13.5 * speedMultiplier;
+                        this.stepDustTimer += dt * speedMultiplier;
+                        if (this.stepDustTimer > 0.25) {
+                            this.stepDustTimer = 0;
+                            spawnDustBurst(this.x - 10, GROUND_Y, 2, 'rgba(255, 237, 213, 0.55)');
+                        }
+                    }
+                },
+
+                getHitbox() {
+                    const h = this.isDucking ? this.duckHeight : this.height;
+                    const w = this.isDucking ? 54 : 34;
+                    return {
+                        x: this.x - w / 2 + 5,
+                        y: this.y - h + 6,
+                        width: w - 10,
+                        height: h - 8
+                    };
+                }
+            };
+
+            // ==========================================
+            // 6. PARTÍCULAS DE POLVO / TARTÁN
+            // ==========================================
+            function spawnDustBurst(x, y, count, color) {
+                if (dustParticles.length > 35) return;
+                for (let i = 0; i < count; i++) {
+                    dustParticles.push({
+                        x: x + (Math.random() - 0.5) * 14,
+                        y: y - 2 - Math.random() * 4,
+                        vx: -40 - Math.random() * 90,
+                        vy: -15 - Math.random() * 45,
+                        radius: 2.2 + Math.random() * 3.2,
+                        alpha: 0.75,
+                        color
+                    });
+                }
+            }
+
+            function updateAndDrawDust(dt) {
+                if (dustParticles.length === 0) return;
+                for (let i = dustParticles.length - 1; i >= 0; i--) {
+                    const p = dustParticles[i];
+                    p.x += p.vx * dt;
+                    p.y += p.vy * dt;
+                    p.vy += 120 * dt;
+                    p.alpha -= dt * 1.9;
+                    p.radius += dt * 3;
+                    if (p.alpha <= 0) {
+                        dustParticles.splice(i, 1);
+                        continue;
+                    }
+                    ctx.globalAlpha = Math.max(0, p.alpha);
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.globalAlpha = 1;
+            }
+
+            // ==========================================
+            // 7. ESCENARIO VIVO: ESTADIO, AVIONETA, MARCADOR Y PISTA
+            // ==========================================
+            function initScenery() {
+                buildStaticCaches();
+
+                clouds = [
+                    { x: 110, y: 52, scale: 1.05, speed: 14 },
+                    { x: 390, y: 34, scale: 0.8, speed: 9 },
+                    { x: 680, y: 62, scale: 1.15, speed: 17 },
+                    { x: 910, y: 42, scale: 0.9, speed: 12 }
+                ];
+
+                birds = [
+                    { x: 250, y: 95, wingPhase: 0.4, speed: 28 },
+                    { x: 272, y: 88, wingPhase: 1.6, speed: 28 },
+                    { x: 610, y: 74, wingPhase: 2.8, speed: 24 }
+                ];
+
+                stadiumFlags = [];
+                for (let i = 0; i < 14; i++) {
+                    stadiumFlags.push({
+                        x: i * 85 + 15,
+                        club: i % 2 === 0 ? 'trotasierra' : 'unicaja'
+                    });
+                }
+            }
+
+            function updateAndDrawAirplane(dt) {
+                airplane.propellerAngle += dt * 45;
+
+                if (!airplane.active) {
+                    airplane.cooldown -= dt;
+                    if (airplane.cooldown <= 0) {
+                        airplane.active = true;
+                        airplane.x = LOGICAL_WIDTH + 90;
+                        airplane.y = 66 + Math.random() * 28;
+                        airplane.bannerIndex = (airplane.bannerIndex + 1) % airplane.messages.length;
+                    }
+                    return;
+                }
+
+                const effectiveSpeed = (state === GAME_STATES.PLAYING || state === GAME_STATES.CELEBRATING)
+                    ? airplane.speed
+                    : airplane.speed * 0.55;
+                airplane.x -= effectiveSpeed * dt;
+
+                if (airplane.x < -360) {
+                    airplane.active = false;
+                    airplane.cooldown = 3.5;
+                    return;
+                }
+
+                const message = airplane.messages[airplane.bannerIndex];
+                const isTrotasierra = message.includes('TROTASIERRA');
+                const bobY = Math.sin(airplane.x * 0.03) * 3;
+
+                ctx.save();
+                ctx.translate(airplane.x, airplane.y + bobY);
+
+                ctx.strokeStyle = '#e2e8f0';
+                ctx.lineWidth = 1.4;
+                ctx.beginPath();
+                ctx.moveTo(28, 2);
+                ctx.lineTo(54, 0);
+                ctx.moveTo(28, 2);
+                ctx.lineTo(54, 14);
+                ctx.stroke();
+
+                const bannerW = 215;
+                const bannerH = 26;
+                const wave = Math.sin(airplane.x * 0.06) * 2.5;
+
+                ctx.save();
+                ctx.translate(54, -6);
+
+                ctx.fillStyle = 'rgba(15, 23, 42, 0.22)';
+                ctx.beginPath();
+                ctx.moveTo(0, 3);
+                ctx.quadraticCurveTo(bannerW * 0.5, 3 + wave, bannerW, 3 - wave);
+                ctx.lineTo(bannerW, bannerH + 3 - wave);
+                ctx.quadraticCurveTo(bannerW * 0.5, bannerH + 3 + wave, 0, bannerH + 3);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.fillStyle = isTrotasierra ? '#f0f9ff' : '#f0fdf4';
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.quadraticCurveTo(bannerW * 0.5, wave, bannerW, -wave);
+                ctx.lineTo(bannerW, bannerH - wave);
+                ctx.quadraticCurveTo(bannerW * 0.5, bannerH + wave, 0, bannerH);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.strokeStyle = isTrotasierra ? '#0284c7' : '#16a34a';
+                ctx.lineWidth = 2.5;
+                ctx.stroke();
+
+                ctx.fillStyle = isTrotasierra ? '#0369a1' : '#15803d';
+                ctx.font = 'bold 13px "Chakra Petch", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(message, bannerW / 2, 17 + wave * 0.4);
+                ctx.restore();
+
+                ctx.fillStyle = isTrotasierra ? '#0284c7' : '#16a34a';
+                ctx.beginPath();
+                ctx.moveTo(16, -2);
+                ctx.lineTo(28, -14);
+                ctx.lineTo(31, -2);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.fillStyle = '#f8fafc';
+                ctx.beginPath();
+                ctx.moveTo(-26, 0);
+                ctx.quadraticCurveTo(-18, -10, 6, -7);
+                ctx.lineTo(28, -3);
+                ctx.lineTo(28, 4);
+                ctx.quadraticCurveTo(4, 10, -24, 5);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.fillStyle = isTrotasierra ? '#0284c7' : '#16a34a';
+                ctx.fillRect(-18, 0, 44, 3);
+
+                ctx.fillStyle = '#38bdf8';
+                ctx.beginPath();
+                ctx.ellipse(-6, -5, 8, 4, -0.1, Math.PI, 0);
+                ctx.fill();
+
+                const propH = Math.abs(Math.sin(airplane.propellerAngle)) * 13 + 2;
+                ctx.fillStyle = '#334155';
+                ctx.fillRect(-29, -propH, 3, propH * 2);
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath();
+                ctx.arc(-27, 0, 2.5, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.restore();
+            }
+
+            const SPECTATOR_COLORS = ['#38bdf8', '#34d399', '#f8fafc', '#0284c7', '#10b981', '#fde047'];
+
+            function drawStadiumAndTrack(dt) {
+                // Estampado único de toda la capa estática (cielo, sol, árboles, torres, estadio base, tartán)
+                ctx.drawImage(staticBgCanvas, 0, 0);
+
+                // Nubes cacheadas
+                for (let i = 0; i < clouds.length; i++) {
+                    const c = clouds[i];
+                    if (state === GAME_STATES.PLAYING || state === GAME_STATES.COUNTDOWN) {
+                        c.x -= c.speed * dt;
+                        if (c.x < -140) c.x = LOGICAL_WIDTH + 120;
+                    }
+                    ctx.drawImage(
+                        cloudSpriteCache,
+                        c.x - 30 * c.scale,
+                        c.y - 33 * c.scale,
+                        130 * c.scale,
+                        65 * c.scale
+                    );
+                }
+
+                // Aves en el cielo
+                ctx.strokeStyle = 'rgba(15, 23, 42, 0.45)';
+                ctx.lineWidth = 1.6;
+                ctx.beginPath();
+                for (let i = 0; i < birds.length; i++) {
+                    const b = birds[i];
+                    b.x -= b.speed * dt;
+                    b.wingPhase += dt * 7;
+                    if (b.x < -30) b.x = LOGICAL_WIDTH + 40;
+                    const flap = Math.sin(b.wingPhase) * 4;
+                    ctx.moveTo(b.x - 6, b.y + flap);
+                    ctx.quadraticCurveTo(b.x - 3, b.y - 3, b.x, b.y);
+                    ctx.quadraticCurveTo(b.x + 3, b.y - 3, b.x + 6, b.y + flap);
+                }
+                ctx.stroke();
+
+                updateAndDrawAirplane(dt);
+
+                // Distancia dinámica en el marcador central
+                ctx.fillStyle = '#facc15';
+                ctx.font = 'bold 15px "Chakra Petch", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${String(Math.floor(score)).padStart(4, '0')} M`, LOGICAL_WIDTH / 2, 142);
+
+                // Banderines de la visera
+                const standsTop = 166;
+                const flagScroll = (distanceTraveled * 0.25) % 85;
+                for (let i = 0; i < stadiumFlags.length; i++) {
+                    const f = stadiumFlags[i];
+                    const fx = ((f.x - flagScroll + LOGICAL_WIDTH + 85) % (LOGICAL_WIDTH + 85)) - 35;
+                    ctx.fillStyle = f.club === 'trotasierra' ? '#0284c7' : '#16a34a';
+                    ctx.beginPath();
+                    ctx.moveTo(fx, standsTop + 6);
+                    ctx.lineTo(fx + 15, standsTop + 6);
+                    ctx.lineTo(fx + 7.5, standsTop + 21);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+
+                // Público animado en las gradas (batching por color para minimizar cambios de estado)
+                const crowdOffset = (distanceTraveled * 0.35) % 24;
+                const isCelebrating = state === GAME_STATES.CELEBRATING;
+                for (let row = 0; row < 5; row++) {
+                    const ry = standsTop + 23 + row * 22;
+                    for (let col = -1; col < LOGICAL_WIDTH / 24 + 2; col++) {
+                        const sx = col * 24 - crowdOffset + (row % 2) * 10;
+                        const colorIdx = Math.abs(col * 2 + row * 3) % SPECTATOR_COLORS.length;
+                        const cheerBounce = isCelebrating
+                            ? Math.sin(celebrationTimer * 15 + col) * 4.5
+                            : Math.sin((distanceTraveled * 0.02) + col + row) * 0.8;
+
+                        ctx.fillStyle = SPECTATOR_COLORS[colorIdx];
+                        ctx.fillRect(sx - 4.5, ry + 1 + cheerBounce, 9, 7);
+
+                        ctx.fillStyle = '#e2b494';
+                        ctx.beginPath();
+                        ctx.arc(sx, ry - 2.5 + cheerBounce, 3.1, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+
+                // Vallas publicitarias cacheadas en movimiento
+                const wallY = 306;
+                const bannerScroll = (distanceTraveled * 0.65) % 440;
+                for (let bx = -440; bx < LOGICAL_WIDTH + 440; bx += 440) {
+                    ctx.drawImage(adBannerCache, bx - bannerScroll, wallY);
+                }
+
+                // Granulado de pista
+                ctx.fillStyle = 'rgba(255, 237, 213, 0.08)';
+                const speckScroll = distanceTraveled % 48;
+                for (let x = -speckScroll; x < LOGICAL_WIDTH; x += 48) {
+                    ctx.fillRect(x, 368, 10, 2);
+                    ctx.fillRect(x + 24, 398, 14, 2);
+                    ctx.fillRect(x + 12, 438, 12, 2);
+                    ctx.fillRect(x + 32, 476, 10, 2);
+                }
+
+                // Marcas de calle y líneas métricas
+                const markSpacing = 480;
+                const markOffset = distanceTraveled % markSpacing;
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+                ctx.font = 'italic bold 16px "Chakra Petch", sans-serif';
+                ctx.textAlign = 'center';
+                for (let mx = -markOffset + 240; mx < LOGICAL_WIDTH + markSpacing; mx += markSpacing) {
+                    ctx.fillRect(mx, 354, 4, 152);
+                    ctx.fillText('1', mx - 18, 377);
+                    ctx.fillText('2', mx - 18, 414);
+                    ctx.fillText('3', mx - 18, 454);
+                }
+
+                if (state === GAME_STATES.START || state === GAME_STATES.COUNTDOWN || distanceTraveled < 180) {
+                    const blockX = player.x - 16 - distanceTraveled;
+                    if (blockX > -60) {
+                        drawStartingBlocks(blockX, GROUND_Y);
+                    }
+                }
+            }
+
+            function drawStartingBlocks(x, y) {
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.fillStyle = '#94a3b8';
+                ctx.fillRect(-18, -3, 34, 4);
+                ctx.fillStyle = '#0284c7';
+                ctx.beginPath();
+                ctx.moveTo(-12, -2);
+                ctx.lineTo(-18, -11);
+                ctx.lineTo(-13, -12);
+                ctx.lineTo(-6, -2);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.moveTo(2, -2);
+                ctx.lineTo(-4, -10);
+                ctx.lineTo(1, -11);
+                ctx.lineTo(8, -2);
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+            }
+
+            // ==========================================
+            // 8. RENDERIZADO ORGÁNICO E ILUSTRADO DE ATLETAS
+            // ==========================================
+            function drawOrganicAthlete(targetCtx, opts) {
+                const {
+                    x,
+                    y,
+                    dir = 1,
+                    club = 'trotasierra',
+                    gender = 'boy',
+                    cycle = 0,
+                    isJumping = false,
+                    isDucking = false,
+                    isCelebrating = false,
+                    isSetInBlocks = false,
+                    jumpOffset = 0,
+                    rivalProfile = null
+                } = opts;
+
+                targetCtx.save();
+                targetCtx.translate(x, y);
+
+                const scaleX = rivalProfile ? rivalProfile.body.scaleX : 1.0;
+                const scaleY = rivalProfile ? rivalProfile.body.scaleY : 1.0;
+                const muscleFactor = rivalProfile ? rivalProfile.body.muscle : 1.0;
+
+                const heightAboveGround = Math.abs(jumpOffset);
+                const shadowScale = Math.max(0.38, 1 - heightAboveGround / 210);
+                const shadowAlpha = Math.max(0.14, 0.36 - heightAboveGround / 520);
+                const baseShadowW = (isDucking ? 30 : 22) * scaleX;
+
+                targetCtx.fillStyle = `rgba(15, 23, 42, ${shadowAlpha * 0.5})`;
+                targetCtx.beginPath();
+                targetCtx.ellipse(0, 3, baseShadowW * 1.25 * shadowScale, 6.5 * shadowScale, 0, 0, Math.PI * 2);
+                targetCtx.fill();
+
+                targetCtx.fillStyle = `rgba(15, 23, 42, ${shadowAlpha})`;
+                targetCtx.beginPath();
+                targetCtx.ellipse(0, 2.5, baseShadowW * shadowScale, 4.5 * shadowScale, 0, 0, Math.PI * 2);
+                targetCtx.fill();
+
+                targetCtx.translate(0, jumpOffset);
+                targetCtx.scale(dir * scaleX, scaleY);
+
+                const skin = rivalProfile
+                    ? rivalProfile.skin
+                    : { base: '#efc09b', shadow: '#cf976f', highlight: '#fae0ca' };
+
+                const hair = rivalProfile
+                    ? rivalProfile.hair
+                    : (gender === 'girl'
+                        ? { style: 'ponytail', color: '#4a2511', highlight: '#783f1d' }
+                        : { style: 'short', color: '#1e293b', highlight: '#475569' });
+
+                const kit = club === 'trotasierra'
+                    ? {
+                        primary: '#0284c7',
+                        primaryDark: '#0369a1',
+                        accent: '#38bdf8',
+                        shorts: '#1e3a8a',
+                        shortsTrim: '#e0f2fe',
+                        shoeMain: '#0ea5e9',
+                        shoeSole: '#ffffff',
+                        band: '#0369a1',
+                        bibText: '#0369a1',
+                        bibCode: 'TRT'
+                    }
+                    : {
+                        primary: '#16a34a',
+                        primaryDark: '#15803d',
+                        accent: '#86efac',
+                        shorts: '#14532d',
+                        shortsTrim: '#fef08a',
+                        shoeMain: '#22c55e',
+                        shoeSole: '#f8fafc',
+                        band: '#15803d',
+                        bibText: '#15803d',
+                        bibCode: 'UNI'
+                    };
+
+                if (isSetInBlocks) {
+                    drawOrganicLimb(targetCtx, -8, -14, -18, -3, 7.5 * muscleFactor, 5.5, skin.shadow);
+                    drawDetailedShoe(targetCtx, -18, -3, kit.shoeMain, kit.shoeSole, -0.35);
+
+                    drawOrganicLimb(targetCtx, -2, -16, -6, -3, 8 * muscleFactor, 6, skin.base);
+                    drawDetailedShoe(targetCtx, -6, -3, kit.shoeMain, kit.shoeSole, -0.2);
+
+                    targetCtx.fillStyle = kit.shorts;
+                    targetCtx.beginPath();
+                    targetCtx.roundRect(-14, -27, 24, 14, 6);
+                    targetCtx.fill();
+
+                    targetCtx.save();
+                    targetCtx.translate(2, -23);
+                    targetCtx.rotate(1.18);
+                    drawStyledTorso(targetCtx, gender, kit, muscleFactor, rivalProfile ? rivalProfile.kitVariant : 0);
+                    targetCtx.restore();
+
+                    drawOrganicLimb(targetCtx, 14, -19, 20, -2, 6.2 * muscleFactor, 4.8, skin.base);
+                    targetCtx.fillStyle = skin.base;
+                    targetCtx.beginPath();
+                    targetCtx.arc(20, -2, 3.2, 0, Math.PI * 2);
+                    targetCtx.fill();
+
+                    drawOrganicHead(targetCtx, 24, -24, skin, hair, gender, kit.band, false, 0);
+
+                } else if (isDucking) {
+                    const legSwing = Math.sin(cycle) * 11;
+                    drawOrganicLimb(targetCtx, -2, -15, -17 + legSwing, -4, 7.5 * muscleFactor, 5.5, skin.shadow);
+                    drawDetailedShoe(targetCtx, -17 + legSwing, -4, kit.shoeMain, kit.shoeSole, 0.1);
+
+                    drawOrganicLimb(targetCtx, 3, -15, 16 - legSwing, -4, 8 * muscleFactor, 5.8, skin.base);
+                    drawDetailedShoe(targetCtx, 16 - legSwing, -4, kit.shoeMain, kit.shoeSole, 0.1);
+
+                    targetCtx.fillStyle = kit.shorts;
+                    targetCtx.beginPath();
+                    targetCtx.roundRect(-14, -27, 28, 14, 6);
+                    targetCtx.fill();
+
+                    targetCtx.save();
+                    targetCtx.translate(3, -24);
+                    targetCtx.rotate(0.72);
+                    drawStyledTorso(targetCtx, gender, kit, muscleFactor, 0);
+                    targetCtx.restore();
+
+                    drawOrganicLimb(targetCtx, 2, -29, -19, -20, 6.2 * muscleFactor, 4.8, skin.base);
+
+                    drawOrganicHead(targetCtx, 24, -29, skin, hair, gender, kit.band, false, cycle);
+
+                } else if (isCelebrating) {
+                    drawOrganicLimb(targetCtx, -6, -24, -12, -3, 7.8 * muscleFactor, 5.6, skin.base);
+                    drawDetailedShoe(targetCtx, -12, -3, kit.shoeMain, kit.shoeSole, -0.08);
+
+                    drawOrganicLimb(targetCtx, 6, -24, 12, -3, 7.8 * muscleFactor, 5.6, skin.base);
+                    drawDetailedShoe(targetCtx, 12, -3, kit.shoeMain, kit.shoeSole, 0.08);
+
+                    targetCtx.fillStyle = kit.shorts;
+                    targetCtx.beginPath();
+                    targetCtx.roundRect(-12, -37, 24, 15, 5);
+                    targetCtx.fill();
+                    targetCtx.fillStyle = kit.shortsTrim;
+                    targetCtx.fillRect(-12, -25, 24, 2.5);
+
+                    targetCtx.save();
+                    targetCtx.translate(0, -35);
+                    drawStyledTorso(targetCtx, gender, kit, muscleFactor, 0);
+                    targetCtx.restore();
+
+                    const wave = Math.sin(cycle * 1.4) * 5;
+                    drawOrganicLimb(targetCtx, -10, -56, -21, -78 + wave, 6.4 * muscleFactor, 4.8, skin.base);
+                    drawOrganicLimb(targetCtx, 10, -56, 21, -78 - wave, 6.4 * muscleFactor, 4.8, skin.base);
+
+                    drawOrganicHead(targetCtx, 0, -70, skin, hair, gender, kit.band, true, cycle);
+
+                } else {
+                    const swing = isJumping ? 0.8 : Math.sin(cycle);
+                    const oppSwing = isJumping ? -0.7 : Math.sin(cycle + Math.PI);
+
+                    const backElbowX = oppSwing * 9 - 2;
+                    const backElbowY = -43 + Math.abs(oppSwing) * 3;
+                    const backHandX = oppSwing * 16 + 4;
+                    const backHandY = -36 - oppSwing * 6;
+                    drawJointedLimb(targetCtx, -1, -54, backElbowX, backElbowY, backHandX, backHandY, 6.2 * muscleFactor, 4.6, skin.shadow);
+
+                    const backKneeX = oppSwing * 13;
+                    const backKneeY = -17 - (oppSwing > 0 ? oppSwing * 6 : 0);
+                    const backFootX = oppSwing * 19 - 4;
+                    const backFootY = -3 - Math.max(0, -oppSwing * 11);
+                    drawJointedLimb(targetCtx, -1, -26, backKneeX, backKneeY, backFootX, backFootY, 8.2 * muscleFactor, 5.4, skin.shadow);
+                    drawDetailedShoe(targetCtx, backFootX, backFootY, kit.shoeMain, kit.shoeSole, oppSwing * 0.25);
+
+                    targetCtx.fillStyle = kit.shorts;
+                    targetCtx.beginPath();
+                    targetCtx.roundRect(-11, -37, 22, 15, 5);
+                    targetCtx.fill();
+                    targetCtx.fillStyle = kit.shortsTrim;
+                    targetCtx.fillRect(-10, -25, 20, 2.2);
+
+                    targetCtx.save();
+                    targetCtx.translate(0, -35);
+                    targetCtx.rotate(0.15);
+                    drawStyledTorso(targetCtx, gender, kit, muscleFactor, rivalProfile ? rivalProfile.kitVariant : 0);
+                    targetCtx.restore();
+
+                    const frontKneeX = swing * 15;
+                    const frontKneeY = -17 - (swing > 0 ? swing * 8 : 0);
+                    const frontFootX = swing * 20;
+                    const frontFootY = -3 - Math.max(0, -swing * 11);
+                    drawJointedLimb(targetCtx, 1, -26, frontKneeX, frontKneeY, frontFootX, frontFootY, 8.6 * muscleFactor, 5.6, skin.base);
+                    drawDetailedShoe(targetCtx, frontFootX, frontFootY, kit.shoeMain, kit.shoeSole, -swing * 0.22);
+
+                    const frontElbowX = swing * 10 - 2;
+                    const frontElbowY = -42 + Math.abs(swing) * 3;
+                    const frontHandX = swing * 17 + 6;
+                    const frontHandY = -36 - swing * 7;
+                    drawJointedLimb(targetCtx, 2, -53, frontElbowX, frontElbowY, frontHandX, frontHandY, 6.6 * muscleFactor, 4.8, skin.base);
+
+                    drawOrganicHead(targetCtx, 4, -69, skin, hair, gender, kit.band, false, cycle);
+                }
+
+                targetCtx.restore();
+            }
+
+            function drawOrganicLimb(c, x1, y1, x2, y2, r1, r2, color) {
+                const angle = Math.atan2(y2 - y1, x2 - x1);
+                const perp = angle + Math.PI / 2;
+
+                const p1x = x1 + Math.cos(perp) * (r1 * 0.5);
+                const p1y = y1 + Math.sin(perp) * (r1 * 0.5);
+                const p2x = x2 + Math.cos(perp) * (r2 * 0.5);
+                const p2y = y2 + Math.sin(perp) * (r2 * 0.5);
+
+                const p3x = x2 - Math.cos(perp) * (r2 * 0.5);
+                const p3y = y2 - Math.sin(perp) * (r2 * 0.5);
+                const p4x = x1 - Math.cos(perp) * (r1 * 0.5);
+                const p4y = y1 - Math.sin(perp) * (r1 * 0.5);
+
+                c.fillStyle = color;
+                c.beginPath();
+                c.moveTo(p1x, p1y);
+                c.quadraticCurveTo((p1x + p2x) * 0.5 + Math.cos(perp) * 1.2, (p1y + p2y) * 0.5 + Math.sin(perp) * 1.2, p2x, p2y);
+                c.arc(x2, y2, r2 * 0.5, perp, perp + Math.PI);
+                c.quadraticCurveTo((p3x + p4x) * 0.5 - Math.cos(perp) * 1.2, (p3y + p4y) * 0.5 - Math.sin(perp) * 1.2, p4x, p4y);
+                c.arc(x1, y1, r1 * 0.5, perp + Math.PI, perp + Math.PI * 2);
+                c.closePath();
+                c.fill();
+            }
+
+            function drawJointedLimb(c, x1, y1, jx, jy, x2, y2, topThick, endThick, color) {
+                const midThick = (topThick + endThick) * 0.52;
+                drawOrganicLimb(c, x1, y1, jx, jy, topThick, midThick, color);
+                drawOrganicLimb(c, jx, jy, x2, y2, midThick * 0.96, endThick, color);
+            }
+
+            function drawStyledTorso(c, gender, kit, muscleFactor, kitVariant) {
+                const shoulderW = (gender === 'girl' ? 10.5 : 12.2) * muscleFactor;
+                const waistW = (gender === 'girl' ? 8.2 : 9.8) * muscleFactor;
+
+                c.fillStyle = kit.primary;
+                c.beginPath();
+                c.moveTo(-shoulderW, -25);
+                c.quadraticCurveTo(0, -27, shoulderW, -25);
+                c.quadraticCurveTo(waistW + 1, -12, waistW, 0);
+                c.lineTo(-waistW, 0);
+                c.quadraticCurveTo(-waistW - 1, -12, -shoulderW, -25);
+                c.closePath();
+                c.fill();
+
+                c.fillStyle = kit.accent;
+                c.beginPath();
+                c.moveTo(-shoulderW + 1, -18);
+                c.lineTo(shoulderW - 1, -12);
+                c.lineTo(waistW, -7);
+                c.lineTo(-waistW, -13);
+                c.closePath();
+                c.fill();
+
+                if (gender === 'girl' && kitVariant === 1) {
+                    c.fillStyle = 'rgba(255, 255, 255, 0.25)';
+                    c.fillRect(-waistW, -2, waistW * 2, 2);
+                }
+
+                c.fillStyle = '#ffffff';
+                c.fillRect(-6.5, -20, 13, 8.5);
+
+                c.fillStyle = kit.bibText;
+                c.font = 'bold 5.5px "Chakra Petch", sans-serif';
+                c.textAlign = 'center';
+                c.fillText(kit.bibCode, 0, -13.8);
+            }
+
+            function drawDetailedShoe(c, x, y, mainColor, soleColor, tilt = 0) {
+                c.save();
+                c.translate(x, y);
+                c.rotate(tilt);
+
+                c.fillStyle = mainColor;
+                c.beginPath();
+                c.moveTo(-5, -4);
+                c.quadraticCurveTo(2, -6, 10, -2);
+                c.quadraticCurveTo(12, 0, 11, 2);
+                c.lineTo(-5, 2);
+                c.closePath();
+                c.fill();
+
+                c.fillStyle = soleColor;
+                c.fillRect(-5.5, 1, 17, 2.8);
+
+                c.strokeStyle = '#ffffff';
+                c.lineWidth = 1.1;
+                c.beginPath();
+                c.moveTo(1, -4);
+                c.lineTo(4, -2.5);
+                c.stroke();
+
+                c.restore();
+            }
+
+            function drawOrganicHead(c, x, y, skin, hair, gender, bandColor, happySmile, cycle) {
+                c.save();
+                c.translate(x, y);
+
+                c.fillStyle = skin.shadow;
+                c.fillRect(-3.5, 8, 7, 6);
+
+                if (gender === 'girl' || hair.style === 'ponytail' || hair.style === 'braid') {
+                    const tailBounce = Math.sin(cycle * 1.15) * 4.5;
+                    c.save();
+                    c.translate(-9, -3);
+                    c.rotate(-0.25 + tailBounce * 0.04);
+
+                    c.fillStyle = bandColor;
+                    c.beginPath();
+                    c.arc(0, 0, 3, 0, Math.PI * 2);
+                    c.fill();
+
+                    c.fillStyle = hair.color;
+                    c.beginPath();
+                    c.moveTo(0, -2.5);
+                    c.quadraticCurveTo(-11, -5 + tailBounce * 0.5, -18, 5 + tailBounce);
+                    c.quadraticCurveTo(-11, 8 + tailBounce * 0.5, 0, 2.5);
+                    c.closePath();
+                    c.fill();
+
+                    if (hair.highlight) {
+                        c.strokeStyle = hair.highlight;
+                        c.lineWidth = 1.4;
+                        c.beginPath();
+                        c.moveTo(-3, -0.5);
+                        c.quadraticCurveTo(-10, -1 + tailBounce * 0.4, -15, 4 + tailBounce * 0.8);
+                        c.stroke();
+                    }
+                    c.restore();
+                } else if (hair.style === 'bun') {
+                    c.fillStyle = hair.color;
+                    c.beginPath();
+                    c.arc(-8, -10, 5.5, 0, Math.PI * 2);
+                    c.fill();
+                    c.strokeStyle = bandColor;
+                    c.lineWidth = 1.8;
+                    c.stroke();
+                }
+
+                c.fillStyle = skin.base;
+                c.beginPath();
+                c.ellipse(0.5, 0, 11.2, 11.8, 0.06, 0, Math.PI * 2);
+                c.fill();
+
+                c.fillStyle = hair.color;
+                c.beginPath();
+                c.arc(-0.5, -2.5, 11.5, Math.PI * 0.88, Math.PI * 2.12);
+                c.quadraticCurveTo(4, -7, -10, -4);
+                c.closePath();
+                c.fill();
+
+                if (gender === 'girl') {
+                    c.beginPath();
+                    c.moveTo(2, -11);
+                    c.quadraticCurveTo(9, -8, 10, -3);
+                    c.quadraticCurveTo(5, -6, 1, -7);
+                    c.closePath();
+                    c.fill();
+                }
+
+                c.fillStyle = bandColor;
+                c.fillRect(-10.5, -6.5, 21, 3.2);
+
+                c.fillStyle = skin.base;
+                c.beginPath();
+                c.arc(-2.5, 1, 2.4, 0, Math.PI * 2);
+                c.fill();
+
+                if (happySmile) {
+                    c.lineWidth = 2;
+                    c.strokeStyle = '#0f172a';
+                    c.beginPath();
+                    c.arc(5, -1, 2.5, Math.PI, 0);
+                    c.stroke();
+
+                    c.fillStyle = '#ffffff';
+                    c.beginPath();
+                    c.arc(5, 3.5, 4.5, 0, Math.PI);
+                    c.fill();
+                    c.strokeStyle = '#0f172a';
+                    c.lineWidth = 1.1;
+                    c.stroke();
+                } else {
+                    c.fillStyle = '#ffffff';
+                    c.beginPath();
+                    c.ellipse(5.5, -1, 2.4, 1.8, 0, 0, Math.PI * 2);
+                    c.fill();
+
+                    c.fillStyle = '#0f172a';
+                    c.beginPath();
+                    c.arc(6.2, -1, 1.3, 0, Math.PI * 2);
+                    c.fill();
+
+                    c.strokeStyle = hair.color;
+                    c.lineWidth = 1.6;
+                    c.beginPath();
+                    c.moveTo(3, -3.5);
+                    c.lineTo(8, -2.8);
+                    c.stroke();
+
+                    c.strokeStyle = gender === 'girl' ? '#be123c' : '#7c2d12';
+                    c.lineWidth = 1.4;
+                    c.beginPath();
+                    if (gender === 'girl') {
+                        c.arc(5.5, 3.5, 2.6, 0.15, Math.PI - 0.15);
+                    } else {
+                        c.moveTo(3, 4.8);
+                        c.lineTo(8, 4.3);
+                    }
+                    c.stroke();
+                }
+
+                c.restore();
+            }
+
+            // ==========================================
+            // 9. PREVIEW ANIMADA EN MENÚ DE SELECCIÓN
+            // ==========================================
+            let lastPreviewRender = 0;
+            function renderRunnerPreviews(timestamp) {
+                if (state !== GAME_STATES.START) return;
+                // Limitar preview del menú a ~30fps para ahorrar batería en móviles
+                if (timestamp - lastPreviewRender < 32) return;
+                lastPreviewRender = timestamp;
+
+                const t = timestamp * 0.008;
+
+                previewBoyCtx.clearRect(0, 0, 96, 96);
+                drawOrganicAthlete(previewBoyCtx, {
+                    x: 48,
+                    y: 86,
+                    dir: 1,
+                    club: 'trotasierra',
+                    gender: 'boy',
+                    cycle: selectedGender === 'boy' ? t : 0.4,
+                    isGrounded: true
+                });
+
+                previewGirlCtx.clearRect(0, 0, 96, 96);
+                drawOrganicAthlete(previewGirlCtx, {
+                    x: 48,
+                    y: 86,
+                    dir: 1,
+                    club: 'trotasierra',
+                    gender: 'girl',
+                    cycle: selectedGender === 'girl' ? t : 0.4,
+                    isGrounded: true
+                });
+            }
+
+            // ==========================================
+            // 10. GENERACIÓN Y DIBUJO DE OBSTÁCULOS
+            // ==========================================
+            function spawnObstacle() {
+                const allowAerial = score >= 115;
+                const rand = Math.random();
+
+                if (!allowAerial || rand < 0.56) {
+                    let count = 1;
+                    if (score > 175 && Math.random() < 0.46) count = 2;
+                    if (score > 440 && Math.random() < 0.28) count = 3;
+
+                    const runners = [];
+                    let cursorX = 0;
+                    for (let i = 0; i < count; i++) {
+                        const profile = generateRandomUnicajaRival(i);
+                        runners.push({
+                            offsetX: cursorX,
+                            profile
+                        });
+                        cursorX += 38 * profile.body.scaleX;
+                    }
+
+                    obstacles.push({
+                        category: 'runner_group',
+                        runners,
+                        totalWidth: cursorX,
+                        x: LOGICAL_WIDTH + 65,
+                        y: GROUND_Y,
+                        animPhase: Math.random() * Math.PI * 2
+                    });
+                } else {
+                    const aerialTypes = ['javelin', 'discus', 'shotput'];
+                    const type = aerialTypes[Math.floor(Math.random() * aerialTypes.length)];
+
+                    const heights = [
+                        { y: GROUND_Y - 26, level: 'low' },
+                        { y: GROUND_Y - 58, level: 'mid' },
+                        { y: GROUND_Y - 94, level: 'high' }
+                    ];
+                    const chosenHeight = heights[Math.floor(Math.random() * heights.length)];
+
+                    obstacles.push({
+                        category: 'projectile',
+                        type,
+                        x: LOGICAL_WIDTH + 85,
+                        y: chosenHeight.y,
+                        heightLevel: chosenHeight.level,
+                        spin: 0,
+                        speedBonus: type === 'javelin' ? 1.18 : 1.06
+                    });
+                }
+            }
+
+            function drawObstacle(obs) {
+                if (obs.category === 'runner_group') {
+                    for (let i = 0; i < obs.runners.length; i++) {
+                        const r = obs.runners[i];
+                        drawOrganicAthlete(ctx, {
+                            x: obs.x + r.offsetX,
+                            y: obs.y,
+                            dir: -1,
+                            club: 'unicaja',
+                            gender: r.profile.gender,
+                            cycle: obs.animPhase + r.profile.phase,
+                            isJumping: false,
+                            isDucking: false,
+                            rivalProfile: r.profile
+                        });
+                    }
+                } else if (obs.category === 'projectile') {
+                    ctx.save();
+                    ctx.translate(obs.x, obs.y);
+
+                    const distToGround = GROUND_Y - obs.y;
+                    const projShadowScale = Math.max(0.35, 1 - distToGround / 170);
+                    ctx.fillStyle = `rgba(15, 23, 42, ${0.24 * projShadowScale})`;
+                    ctx.beginPath();
+                    ctx.ellipse(0, distToGround + 2, (obs.type === 'javelin' ? 36 : 16) * projShadowScale, 4 * projShadowScale, 0, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    if (obs.type === 'javelin') {
+                        ctx.rotate(-0.07);
+                        ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.moveTo(42, -3.5);
+                        ctx.lineTo(76, -3.5);
+                        ctx.moveTo(46, 3.5);
+                        ctx.lineTo(70, 3.5);
+                        ctx.stroke();
+
+                        ctx.fillStyle = '#16a34a';
+                        ctx.beginPath();
+                        ctx.moveTo(-56, 0);
+                        ctx.lineTo(-34, -3.4);
+                        ctx.lineTo(50, -2.2);
+                        ctx.lineTo(54, 0);
+                        ctx.lineTo(50, 2.2);
+                        ctx.lineTo(-34, 3.4);
+                        ctx.closePath();
+                        ctx.fill();
+
+                        ctx.fillStyle = '#facc15';
+                        ctx.fillRect(-8, -3.6, 16, 7.2);
+
+                    } else if (obs.type === 'discus') {
+                        ctx.strokeStyle = 'rgba(254, 240, 138, 0.5)';
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.moveTo(22, 0);
+                        ctx.lineTo(48, 0);
+                        ctx.stroke();
+
+                        ctx.rotate(Math.sin(obs.spin) * 0.25);
+                        ctx.fillStyle = '#d97706';
+                        ctx.beginPath();
+                        ctx.ellipse(0, 0, 22, 7.8, 0, 0, Math.PI * 2);
+                        ctx.fill();
+
+                        ctx.strokeStyle = '#f8fafc';
+                        ctx.lineWidth = 2.5;
+                        ctx.stroke();
+
+                        ctx.fillStyle = '#e2e8f0';
+                        ctx.beginPath();
+                        ctx.ellipse(0, 0, 7.5, 3, 0, 0, Math.PI * 2);
+                        ctx.fill();
+
+                    } else if (obs.type === 'shotput') {
+                        ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
+                        ctx.lineWidth = 2.5;
+                        ctx.beginPath();
+                        ctx.arc(4, 0, 19, -0.5, 0.5);
+                        ctx.stroke();
+
+                        ctx.fillStyle = '#334155';
+                        ctx.beginPath();
+                        ctx.arc(0, 0, 15, 0, Math.PI * 2);
+                        ctx.fill();
+
+                        ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
+                        ctx.beginPath();
+                        ctx.arc(-5, -5.5, 3.4, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+
+                    ctx.restore();
+                }
+            }
+
+            function getObstacleHitbox(obs) {
+                if (obs.category === 'runner_group') {
+                    let maxHeightScale = 1.0;
+                    for (let i = 0; i < obs.runners.length; i++) {
+                        if (obs.runners[i].profile.body.scaleY > maxHeightScale) {
+                            maxHeightScale = obs.runners[i].profile.body.scaleY;
+                        }
+                    }
+                    const h = 62 * maxHeightScale;
+                    return {
+                        x: obs.x - 12 + 4,
+                        y: obs.y - h + 6,
+                        width: Math.max(24, obs.totalWidth - 12),
+                        height: h - 6
+                    };
+                } else {
+                    if (obs.type === 'javelin') {
+                        return { x: obs.x - 42, y: obs.y - 5, width: 84, height: 10 };
+                    } else if (obs.type === 'discus') {
+                        return { x: obs.x - 18, y: obs.y - 7, width: 36, height: 14 };
+                    } else {
+                        return { x: obs.x - 12, y: obs.y - 12, width: 24, height: 24 };
+                    }
+                }
+            }
+
+            function checkCollision(rectA, rectB) {
+                return (
+                    rectA.x < rectB.x + rectB.width &&
+                    rectA.x + rectA.width > rectB.x &&
+                    rectA.y < rectB.y + rectB.height &&
+                    rectA.y + rectA.height > rectB.y
+                );
+            }
+
+            // ==========================================
+            // 11. ANIMACIÓN ESPECIAL AL LLEGAR A 1000 PUNTOS
+            // ==========================================
+            function triggerUnicajaCelebration() {
+                state = GAME_STATES.CELEBRATING;
+                hasTriggered1000Event = true;
+                celebrationTimer = 0;
+                obstacles = [];
+
+                player.y = GROUND_Y;
+                player.vy = 0;
+                player.isGrounded = true;
+                player.isDucking = false;
+
+                sound.playUnicajaFanfare();
+
+                if (1000 > highScore) {
+                    highScore = 1000;
+                    localStorage.setItem('trotasierra_unicaja_hi', String(highScore));
+                }
+                reportLiveRecord(1000);
+
+                const offsets = [-85, 72, 130, 188, 246, 305];
+                greenFans = offsets.map((offsetX, idx) => ({
+                    x: player.x + offsetX,
+                    y: GROUND_Y + (idx % 2 === 0 ? 4 : -2),
+                    dir: offsetX < 0 ? 1 : -1,
+                    profile: generateRandomUnicajaRival(idx)
+                }));
+
+                confettiParticles = [];
+                const colors = ['#10b981', '#22c55e', '#0284c7', '#38bdf8', '#facc15', '#ffffff'];
+                for (let i = 0; i < 95; i++) {
+                    confettiParticles.push({
+                        x: Math.random() * LOGICAL_WIDTH,
+                        y: -20 - Math.random() * 260,
+                        vx: (Math.random() - 0.5) * 95,
+                        vy: 95 + Math.random() * 145,
+                        size: 6 + Math.random() * 6,
+                        color: colors[i % colors.length],
+                        rot: Math.random() * Math.PI * 2,
+                        vRot: (Math.random() - 0.5) * 8
+                    });
+                }
+
+                milestoneText.textContent = '⭐ ¡TROTASIERRA + UNICAJA!';
+            }
+
+            function updateAndDrawCelebration(dt) {
+                celebrationTimer += dt;
+
+                const playerBounce = -Math.abs(Math.sin(celebrationTimer * 7.5)) * 26;
+                drawOrganicAthlete(ctx, {
+                    x: player.x,
+                    y: GROUND_Y,
+                    dir: 1,
+                    club: 'trotasierra',
+                    gender: selectedGender,
+                    cycle: celebrationTimer * 10,
+                    isCelebrating: true,
+                    jumpOffset: playerBounce
+                });
+
+                for (let i = 0; i < greenFans.length; i++) {
+                    const fan = greenFans[i];
+                    const fanBounce = -Math.abs(Math.sin(celebrationTimer * 8 + fan.profile.phase)) * 22;
+                    drawOrganicAthlete(ctx, {
+                        x: fan.x,
+                        y: fan.y,
+                        dir: fan.dir,
+                        club: 'unicaja',
+                        gender: fan.profile.gender,
+                        cycle: celebrationTimer * 11 + fan.profile.phase,
+                        isCelebrating: true,
+                        jumpOffset: fanBounce,
+                        rivalProfile: fan.profile
+                    });
+                }
+
+                for (let i = 0; i < confettiParticles.length; i++) {
+                    const p = confettiParticles[i];
+                    p.x += p.vx * dt;
+                    p.y += p.vy * dt;
+                    p.rot += p.vRot * dt;
+                    if (p.y > LOGICAL_HEIGHT + 10) {
+                        p.y = -15;
+                        p.x = Math.random() * LOGICAL_WIDTH;
+                    }
+
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rot);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.size / 2, -p.size / 4, p.size, p.size / 2);
+                    ctx.restore();
+                }
+
+                const bannerScale = Math.min(1, celebrationTimer * 3.5);
+                ctx.save();
+                ctx.translate(LOGICAL_WIDTH / 2, 130);
+                ctx.scale(bannerScale, bannerScale);
+
+                ctx.fillStyle = 'rgba(15, 23, 42, 0.92)';
+                ctx.beginPath();
+                ctx.roundRect(-360, -50, 720, 100, 20);
+                ctx.fill();
+
+                ctx.strokeStyle = '#38bdf8';
+                ctx.lineWidth = 4;
+                ctx.stroke();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 30px "Chakra Petch", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('¡TE HAS AFILIADO CON EL UNICAJA!', 0, -5);
+
+                ctx.fillStyle = '#6ee7b7';
+                ctx.font = 'bold 15px "Inter", sans-serif';
+                ctx.fillText('🎉 ¡Trotasierra y Unicaja celebran juntos en la pista! 🎉', 0, 25);
+                ctx.restore();
+
+                if (celebrationTimer >= CELEBRATION_DURATION) {
+                    state = GAME_STATES.CHOICE;
+                    unicajaChoiceModal.classList.remove('hidden');
+                }
+            }
+
+            // ==========================================
+            // 12. CUENTA ATRÁS DE SALIDA (3, 2, 1, ¡YA!)
+            // ==========================================
+            function beginCountdownSequence() {
+                if (!getAthleteName()) {
+                    if (!registerAthleteFromGame(inlineAthleteInput.value)) {
+                        return;
+                    }
+                }
+
+                sound.init();
+                score = 0;
+                lastDisplayedScore = -1;
+                lastDisplayedMilestone = '';
+                lastHundredMilestone = 0;
+                hasTriggered1000Event = false;
+                endlessModeActive = false;
+                currentSpeed = baseSpeed;
+                distanceTraveled = 0;
+                obstacles = [];
+                dustParticles = [];
+                spawnTimer = 1.05;
+
+                player.reset();
+                updateHUD();
+
+                startScreen.classList.add('hidden');
+                gameoverScreen.classList.add('hidden');
+                unicajaChoiceModal.classList.add('hidden');
+
+                countdownTimer = 3.0;
+                lastCountdownInt = 4;
+                goBannerTimer = 0;
+                state = GAME_STATES.COUNTDOWN;
+            }
+
+            function drawCountdownOverlay() {
+                const currentInt = Math.ceil(countdownTimer);
+                const frac = countdownTimer - Math.floor(countdownTimer);
+                const popScale = 0.85 + frac * 0.45;
+
+                ctx.save();
+                ctx.translate(LOGICAL_WIDTH / 2, 195);
+                ctx.scale(popScale, popScale);
+
+                ctx.fillStyle = 'rgba(15, 23, 42, 0.78)';
+                ctx.beginPath();
+                ctx.arc(0, -10, 64, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.strokeStyle = currentInt === 1 ? '#facc15' : '#38bdf8';
+                ctx.lineWidth = 4;
+                ctx.stroke();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 68px "Chakra Petch", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(String(currentInt), 0, -8);
+
+                ctx.fillStyle = '#bae6fd';
+                ctx.font = 'bold 14px "Inter", sans-serif';
+                ctx.fillText(currentInt === 1 ? '¡LISTOS!' : 'PREPARADOS...', 0, 32);
+                ctx.restore();
+            }
+
+            function drawGoBanner(dt) {
+                if (goBannerTimer <= 0) return;
+                goBannerTimer -= dt;
+                const alpha = Math.min(1, goBannerTimer * 2);
+
+                ctx.save();
+                ctx.globalAlpha = alpha;
+                ctx.translate(LOGICAL_WIDTH / 2, 185);
+                ctx.fillStyle = 'rgba(16, 185, 129, 0.92)';
+                ctx.beginPath();
+                ctx.roundRect(-110, -32, 220, 64, 18);
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 42px "Chakra Petch", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('¡YA!', 0, 2);
+                ctx.restore();
+            }
+
+            // ==========================================
+            // 13. BUCLE PRINCIPAL DE ACTUALIZACIÓN Y RENDER
+            // ==========================================
+            function updateHUD() {
+                const displayScore = Math.floor(score);
+                // Evita mutaciones innecesarias del DOM cuando los dígitos no cambian
+                if (displayScore !== lastDisplayedScore) {
+                    lastDisplayedScore = displayScore;
+                    hudScore.textContent = String(displayScore).padStart(5, '0');
+                }
+                if (highScore !== lastDisplayedHi) {
+                    lastDisplayedHi = highScore;
+                    hudHi.textContent = String(highScore).padStart(5, '0');
+                }
+
+                if (!hasTriggered1000Event) {
+                    const remaining = Math.max(0, 1000 - displayScore);
+                    const nextText = `META UNICAJA: ${remaining} PTS`;
+                    if (nextText !== lastDisplayedMilestone) {
+                        lastDisplayedMilestone = nextText;
+                        milestoneText.textContent = nextText;
+                    }
+                }
+            }
+
+            function triggerGameOver(manualExit = false) {
+                state = GAME_STATES.GAMEOVER;
+                if (!manualExit) {
+                    sound.playCrash();
+                }
+
+                const finalIntScore = Math.floor(score);
+                if (finalIntScore > highScore) {
+                    highScore = finalIntScore;
+                    localStorage.setItem('trotasierra_unicaja_hi', String(highScore));
+                }
+                updateHUD();
+
+                reportFinalGameOver(finalIntScore);
+
+                const athleteName = getAthleteName();
+                if (athleteName) {
+                    gameoverAthleteSync.textContent = `🪪 Atleta: ${athleteName} · Récord sincronizado en el Salón de la Fama`;
+                } else {
+                    gameoverAthleteSync.textContent = 'Registra tu nombre en el Pasaporte para entrar en el ranking';
+                }
+
+                finalScoreEl.textContent = finalIntScore;
+                finalHiEl.textContent = highScore;
+
+                if (manualExit) {
+                    gameoverBadge.textContent = 'Sesión finalizada';
+                    gameoverBadge.className = 'inline-block px-3 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-[11px] font-bold uppercase tracking-wider mb-1';
+                    gameoverTitle.textContent = '¡GRAN CARRERA!';
+                } else {
+                    gameoverBadge.textContent = '¡Colisión en la pista!';
+                    gameoverBadge.className = 'inline-block px-3 py-0.5 rounded-full bg-rose-500/20 border border-rose-400/30 text-rose-300 text-[11px] font-bold uppercase tracking-wider mb-1';
+                    gameoverTitle.textContent = 'CARRERA TERMINADA';
+                }
+
+                if (hasTriggered1000Event) {
+                    affiliatedStatusBox.classList.remove('hidden');
+                } else {
+                    affiliatedStatusBox.classList.add('hidden');
+                }
+
+                unicajaChoiceModal.classList.add('hidden');
+                gameoverScreen.classList.remove('hidden');
+            }
+
+            function gameLoop(timestamp) {
+                if (!lastTimestamp) lastTimestamp = timestamp;
+                const dt = Math.min((timestamp - lastTimestamp) / 1000, 0.05);
+                lastTimestamp = timestamp;
+
+                // No hace falta clearRect completo porque staticBgCanvas sobrescribe todo el lienzo opaco
+                drawStadiumAndTrack(dt);
+
+                if (state === GAME_STATES.START) {
+                    renderRunnerPreviews(timestamp);
+
+                    drawOrganicAthlete(ctx, {
+                        x: player.x,
+                        y: GROUND_Y,
+                        dir: 1,
+                        club: 'trotasierra',
+                        gender: selectedGender,
+                        cycle: timestamp * 0.006,
+                        isGrounded: true
+                    });
+
+                } else if (state === GAME_STATES.COUNTDOWN) {
+                    const currentInt = Math.ceil(countdownTimer);
+                    if (currentInt < lastCountdownInt && currentInt >= 1) {
+                        lastCountdownInt = currentInt;
+                        sound.playCountdownBeep(currentInt);
+                    }
+
+                    countdownTimer -= dt;
+
+                    drawOrganicAthlete(ctx, {
+                        x: player.x,
+                        y: GROUND_Y,
+                        dir: 1,
+                        club: 'trotasierra',
+                        gender: selectedGender,
+                        isSetInBlocks: true
+                    });
+
+                    if (countdownTimer <= 0) {
+                        sound.playCountdownBeep(0);
+                        spawnDustBurst(player.x - 8, GROUND_Y, 10, '#f97316');
+                        goBannerTimer = 0.85;
+                        state = GAME_STATES.PLAYING;
+                    } else {
+                        drawCountdownOverlay();
+                    }
+
+                } else if (state === GAME_STATES.PLAYING) {
+                    const speedMultiplier = Math.min(1.55, 1 + (score / 1000) * 0.22);
+                    currentSpeed = baseSpeed * speedMultiplier;
+                    distanceTraveled += currentSpeed * dt;
+
+                    score += BASE_SCORE_RATE * speedMultiplier * dt;
+                    const intScore = Math.floor(score);
+
+                    if (intScore > highScore) {
+                        highScore = intScore;
+                        localStorage.setItem('trotasierra_unicaja_hi', String(highScore));
+                        reportLiveRecord(intScore);
+                    }
+
+                    const currentHundred = Math.floor(score / 100);
+                    if (currentHundred > lastHundredMilestone && currentHundred > 0 && intScore !== 1000) {
+                        lastHundredMilestone = currentHundred;
+                        sound.playMilestone100();
+                    }
+
+                    if (!hasTriggered1000Event && score >= 1000) {
+                        score = 1000;
+                        updateHUD();
+                        triggerUnicajaCelebration();
+                    } else {
+                        updateHUD();
+                        player.update(dt, speedMultiplier);
+                        updateAndDrawDust(dt);
+
+                        spawnTimer -= dt;
+                        if (spawnTimer <= 0) {
+                            spawnObstacle();
+                            const minGap = Math.max(0.88, 1.48 / speedMultiplier);
+                            const maxGap = Math.max(1.45, 2.35 / speedMultiplier);
+                            spawnTimer = minGap + Math.random() * (maxGap - minGap);
+                        }
+
+                        const playerBox = player.getHitbox();
+                        for (let i = obstacles.length - 1; i >= 0; i--) {
+                            const obs = obstacles[i];
+                            const obsSpeed = obs.category === 'projectile'
+                                ? currentSpeed * obs.speedBonus
+                                : currentSpeed * 1.12;
+
+                            obs.x -= obsSpeed * dt;
+                            if (obs.category === 'runner_group') {
+                                obs.animPhase += dt * 14 * speedMultiplier;
+                            } else {
+                                obs.spin += dt * 12;
+                            }
+
+                            drawObstacle(obs);
+
+                            if (checkCollision(playerBox, getObstacleHitbox(obs))) {
+                                triggerGameOver(false);
+                                break;
+                            }
+
+                            if (obs.x < -200) {
+                                obstacles.splice(i, 1);
+                            }
+                        }
+
+                        drawOrganicAthlete(ctx, {
+                            x: player.x,
+                            y: player.y,
+                            dir: 1,
+                            club: 'trotasierra',
+                            gender: selectedGender,
+                            cycle: player.runCycle,
+                            isJumping: !player.isGrounded,
+                            isDucking: player.isDucking
+                        });
+
+                        drawGoBanner(dt);
+                    }
+
+                } else if (state === GAME_STATES.CELEBRATING || state === GAME_STATES.CHOICE) {
+                    updateAndDrawCelebration(state === GAME_STATES.CELEBRATING ? dt : 0);
+
+                } else if (state === GAME_STATES.GAMEOVER) {
+                    for (let i = 0; i < obstacles.length; i++) {
+                        drawObstacle(obstacles[i]);
+                    }
+                    drawOrganicAthlete(ctx, {
+                        x: player.x,
+                        y: player.y,
+                        dir: 1,
+                        club: 'trotasierra',
+                        gender: selectedGender,
+                        cycle: player.runCycle,
+                        isJumping: !player.isGrounded,
+                        isDucking: player.isDucking
+                    });
+                }
+
+                requestAnimationFrame(gameLoop);
+            }
+
+            // ==========================================
+            // 14. CONTROLES DE TECLADO, RATÓN Y TÁCTILES
+            // ==========================================
+            function selectCharacter(gender) {
+                selectedGender = gender;
+                if (gender === 'boy') {
+                    selectBoyBtn.classList.add('selected');
+                    selectGirlBtn.classList.remove('selected');
+                } else {
+                    selectGirlBtn.classList.add('selected');
+                    selectBoyBtn.classList.remove('selected');
+                }
+            }
+
+            selectBoyBtn.addEventListener('click', () => selectCharacter('boy'));
+            selectGirlBtn.addEventListener('click', () => selectCharacter('girl'));
+
+            window.addEventListener('keydown', (e) => {
+                if (document.activeElement === inlineAthleteInput) return;
+
+                if (['Space', 'ArrowUp', 'ArrowDown'].includes(e.code)) {
+                    e.preventDefault();
+                }
+
+                if (state === GAME_STATES.PLAYING) {
+                    if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') {
+                        player.jump();
+                    } else if (e.code === 'ArrowDown' || e.code === 'KeyS') {
+                        player.setDuck(true);
+                    }
+                } else if (state === GAME_STATES.START) {
+                    if (e.code === 'ArrowLeft') selectCharacter('boy');
+                    else if (e.code === 'ArrowRight') selectCharacter('girl');
+                    else if (e.code === 'Space' || e.code === 'Enter') beginCountdownSequence();
+                } else if (state === GAME_STATES.GAMEOVER && (e.code === 'Space' || e.code === 'Enter')) {
+                    beginCountdownSequence();
+                }
+            });
+
+            window.addEventListener('keyup', (e) => {
+                if (e.code === 'ArrowDown' || e.code === 'KeyS') {
+                    player.setDuck(false);
+                }
+            });
+
+            canvas.addEventListener('pointerdown', () => {
+                if (state === GAME_STATES.PLAYING) {
+                    player.jump();
+                }
+            });
+
+            if (touchJumpHud) {
+                touchJumpHud.addEventListener('pointerdown', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (state === GAME_STATES.PLAYING) {
+                        player.jump();
+                    }
+                });
+            }
+
+            if (touchDuckHud) {
+                touchDuckHud.addEventListener('pointerdown', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (state === GAME_STATES.PLAYING) {
+                        player.setDuck(true);
+                    }
+                });
+                touchDuckHud.addEventListener('pointerup', () => player.setDuck(false));
+                touchDuckHud.addEventListener('pointerleave', () => player.setDuck(false));
+                touchDuckHud.addEventListener('pointercancel', () => player.setDuck(false));
+            }
+
+            btnStart.addEventListener('click', beginCountdownSequence);
+            btnRestart.addEventListener('click', beginCountdownSequence);
+            btnChangeRunner.addEventListener('click', () => {
+                gameoverScreen.classList.add('hidden');
+                syncAthleteUI();
+                state = GAME_STATES.START;
+                startScreen.classList.remove('hidden');
+            });
+            btnSound.addEventListener('click', () => sound.toggleMute());
+
+            btnContinueEndless.addEventListener('click', () => {
+                unicajaChoiceModal.classList.add('hidden');
+                endlessModeActive = true;
+                spawnTimer = 1.1;
+                milestoneText.textContent = '♾️ MODO INFINITO (TROTASIERRA-UNICAJA)';
+                state = GAME_STATES.PLAYING;
+            });
+
+            btnExitSummary.addEventListener('click', () => {
+                triggerGameOver(true);
+            });
+
+            syncAthleteUI();
+            initScenery();
+            updateHUD();
+            window.onload = function () {
+                requestAnimationFrame(gameLoop);
+            };
+        })();
+    </script>
+</body>
+</html>
